@@ -234,10 +234,9 @@ export default function GSiteAutomatorPage() {
     }
   };
 
-  const copyToClipboard = (textToCopy: string, type: 'Title' | 'Content') => {
+  const copyToClipboardFallback = (text: string, type: 'Title' | 'Content') => {
     const textArea = document.createElement("textarea");
-    textArea.value = textToCopy;
-    // Make the textarea out of viewport
+    textArea.value = text;
     textArea.style.position = "fixed";
     textArea.style.left = "-9999px";
     textArea.style.top = "-9999px";
@@ -263,34 +262,74 @@ export default function GSiteAutomatorPage() {
   };
   
   const copyTitle = (title: string) => {
-    copyToClipboard(title, "Title");
+    if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(title).then(() => {
+             toast({
+                title: "Copied!",
+                description: "Title copied to clipboard.",
+            });
+        }, (err) => {
+            console.error("Failed to copy title: ", err);
+            copyToClipboardFallback(title, "Title");
+        });
+    } else {
+        copyToClipboardFallback(title, "Title");
+    }
   };
 
   const convertHtmlToPlainText = (html: string): string => {
+    if (typeof window === 'undefined') {
+        // Fallback for server-side rendering or environments without DOM
+        return html.replace(/<[^>]*>/g, '');
+    }
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
-
+    // Handle the main link specifically
     const linkElement = tempDiv.querySelector('a');
     if (linkElement) {
         const linkText = linkElement.textContent || '';
         const linkHref = linkElement.href;
-        linkElement.parentElement?.replaceWith(document.createTextNode(`\n${linkText} (${linkHref})\n`));
+        // Replace the parent paragraph with the desired text format
+        linkElement.parentElement?.replaceWith(document.createTextNode(`\n${linkText} ( ${linkHref} )\n`));
     }
-    
+    // Replace <br> with newlines
     tempDiv.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
     
+    // Get text content, which now includes the formatted link
     return tempDiv.textContent || '';
   }
 
-  const copyContentAsPlainText = (htmlContent: string) => {
-    const plainText = convertHtmlToPlainText(htmlContent);
-    copyToClipboard(plainText.trim(), "Content");
+  const copyHtmlContent = (htmlContent: string) => {
+    try {
+      const plainText = convertHtmlToPlainText(htmlContent);
+      const htmlBlob = new Blob([htmlContent], { type: 'text/html' });
+      const textBlob = new Blob([plainText], { type: 'text/plain' });
+
+      const clipboardItem = new ClipboardItem({
+        'text/html': htmlBlob,
+        'text/plain': textBlob,
+      });
+
+      navigator.clipboard.write([clipboardItem]).then(() => {
+        toast({
+            title: "Copied!",
+            description: "Content copied to clipboard.",
+        });
+      }, (err) => {
+        console.error("Failed to copy content: ", err);
+        // Fallback to plain text copy if HTML copy fails
+        copyToClipboardFallback(plainText, "Content");
+      });
+    } catch (e) {
+      console.error("Error creating ClipboardItem, falling back to plain text copy.", e);
+      const plainText = convertHtmlToPlainText(htmlContent);
+      copyToClipboardFallback(plainText, "Content");
+    }
   };
 
   const downloadArticleAsTxt = (article: Article) => {
     const plainText = convertHtmlToPlainText(article.content);
     const textToDownload = `${article.title}\n\n${plainText.trim()}`;
-
     const blob = new Blob([textToDownload], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -465,7 +504,7 @@ Separated by commas or new lines."
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => copyContentAsPlainText(article.content)}
+                          onClick={() => copyHtmlContent(article.content)}
                         >
                           <ClipboardCopy className="mr-2 h-4 w-4" />
                           Copy Content
