@@ -279,20 +279,19 @@ export default function GSiteAutomatorPage() {
 
   const copyHtmlContent = (htmlContent: string) => {
     const listener = (e: ClipboardEvent) => {
-        e.preventDefault();
-        if (e.clipboardData) {
-            e.clipboardData.setData('text/html', htmlContent);
-            e.clipboardData.setData('text/plain', htmlContent);
-             toast({
-                title: "Copied!",
-                description: "Content copied to clipboard.",
-            });
-        }
+      if (!e.clipboardData) return;
+      e.clipboardData.setData('text/html', htmlContent);
+      e.clipboardData.setData('text/plain', htmlContent);
+      e.preventDefault();
     };
 
     document.addEventListener('copy', listener);
     document.execCommand('copy');
     document.removeEventListener('copy', listener);
+    toast({
+        title: "Copied!",
+        description: "Content copied to clipboard.",
+    });
   };
   
   const downloadArticleAsTxt = (article: Article) => {
