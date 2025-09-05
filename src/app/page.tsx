@@ -190,7 +190,6 @@ export default function GSiteAutomatorPage() {
     startTransition(async () => {
       const result = await generateArticles(values);
       if (result.success && result.results) {
-        // Add random suffix on the client-side to prevent hydration issues
         const articlesWithRandomSuffix = result.results.map(article => ({
             ...article,
             title: `${article.title} ${generateRandomString(6)}`
@@ -440,7 +439,8 @@ Separated by commas or new lines."
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: article.content }} />
+                    <div className="flex flex-col sm:flex-row gap-2 mt-4">
                       <Button
                         variant="outline"
                         size="sm"
