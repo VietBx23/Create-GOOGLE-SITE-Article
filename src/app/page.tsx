@@ -5,7 +5,7 @@ import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { generateArticles, suggestArticleKeywords } from "./actions";
+import { generateArticles } from "./actions";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 
@@ -273,34 +273,49 @@ export default function GSiteAutomatorPage() {
   };
 
   const copyHtmlContent = (html: string) => {
-     copyToClipboardFallback(html, "Content");
+    const tempEl = document.createElement('div');
+    tempEl.innerHTML = html;
+
+    tempEl.querySelectorAll('p, br').forEach(el => {
+      if (el.tagName === 'P') {
+        const p = el as HTMLParagraphElement;
+        const a = p.querySelector('a');
+        if (a) {
+          p.replaceWith(document.createTextNode(`${a.href}\n\n`));
+        } else {
+          p.after(document.createTextNode('\n'));
+        }
+      } else { 
+         el.replaceWith(document.createTextNode('\n'));
+      }
+    });
+    
+    let text = tempEl.textContent || tempEl.innerText || "";
+    text = text.replace(/\n\s*\n/g, '\n\n').trim();
+
+    copyToClipboardFallback(text, "Content");
   };
   
   const downloadArticleAsTxt = (article: Article) => {
     const tempEl = document.createElement('div');
     tempEl.innerHTML = article.content;
     
-    // Replace <p> with newline, <br> with newline, and extract text from <a>
     tempEl.querySelectorAll('p, br').forEach(el => {
       if (el.tagName === 'P') {
         const p = el as HTMLParagraphElement;
         const a = p.querySelector('a');
         if (a) {
-          // Replace the whole <p> tag with the link's href and two newlines
           p.replaceWith(document.createTextNode(`${a.href}\n\n`));
         } else {
-           // Add a newline after other <p> tags
           p.after(document.createTextNode('\n'));
         }
-      } else { // BR tag
+      } else { 
          el.replaceWith(document.createTextNode('\n'));
       }
     });
 
-    // Get the processed text content
     let text = `${article.title}\n\n${tempEl.textContent || tempEl.innerText}`;
     
-    // Cleanup extra blank lines
     text = text.replace(/\n\s*\n/g, '\n\n');
 
     const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
