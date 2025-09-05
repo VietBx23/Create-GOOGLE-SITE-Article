@@ -70,6 +70,7 @@ const generateRandomString = (length: number): string => {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
+    // This is safe because it's only called on the client.
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return result;
@@ -186,7 +187,7 @@ export default function GSiteAutomatorPage() {
       setArticles([]);
       const result = await generateArticles(values);
       if (result.success && result.results) {
-        // Random string is now generated client-side
+        // Add random suffix on the client-side to prevent hydration issues
         const articlesWithRandomSuffix = result.results.map(article => ({
             ...article,
             title: `${article.title} ${generateRandomString(6)}`
@@ -218,50 +219,38 @@ export default function GSiteAutomatorPage() {
   };
 
   const copyToClipboard = (text: string, type: string) => {
-    navigator.clipboard.writeText(text).then(() => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
       toast({
         title: "Copied!",
         description: `${type} copied to clipboard.`,
       });
-    }).catch(err => {
-        console.error(`Failed to copy ${type}:`, err);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: `Failed to copy ${type}.`,
-        });
-    });
+    } catch (err) {
+      console.error(`Failed to copy ${type}:`, err);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: `Failed to copy ${type}.`,
+      });
+    }
+    document.body.removeChild(textArea);
   };
   
   const copyHtmlAsTextToClipboard = (html: string) => {
-    try {
-      const tempEl = document.createElement('div');
-      tempEl.innerHTML = html;
-      // Replace <br> with newlines for plain text representation
-      tempEl.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
-      const text = tempEl.textContent || '';
-      
-      navigator.clipboard.writeText(text.trim()).then(() => {
-          toast({
-              title: "Copied!",
-              description: "Content copied to clipboard as plain text.",
-          });
-      }).catch(err => {
-          console.error("Failed to copy content: ", err);
-          toast({
-              variant: "destructive",
-              title: "Error",
-              description: "Could not copy content to clipboard.",
-          });
-      });
-    } catch (err) {
-      console.error("Failed to parse or copy content: ", err);
-      toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Failed to copy content.",
-      });
-    }
+    // Create a temporary element to parse the HTML
+    const tempEl = document.createElement('div');
+    tempEl.innerHTML = html;
+    
+    // Replace <br> with newlines for plain text representation
+    tempEl.querySelectorAll('br, br/, <br />, p').forEach(br => br.replaceWith('\n'));
+    
+    const text = tempEl.textContent || '';
+    copyToClipboard(text.trim(), "Content");
   };
 
   const downloadArticle = (article: Article) => {
@@ -467,5 +456,3 @@ Separated by commas or new lines."
     </div>
   );
 }
-
-    

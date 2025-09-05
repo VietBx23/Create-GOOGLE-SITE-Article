@@ -119,7 +119,3 @@ export async function suggestArticleKeywords(
     return { success: false, error: 'Failed to communicate with AI model.' };
   }
 }
-
-    
-
-    
