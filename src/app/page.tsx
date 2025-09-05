@@ -208,30 +208,32 @@ export default function GSiteAutomatorPage() {
     });
   };
   
-  const copyHtmlToClipboard = (html: string) => {
-    const blob = new Blob([html], { type: 'text/html' });
-    const clipboardItem = new ClipboardItem({ 'text/html': blob });
-    navigator.clipboard.write([clipboardItem]).then(() => {
+  const copyHtmlToClipboard = async (html: string) => {
+    try {
+      const blob = new Blob([html], { type: 'text/html' });
+      const clipboardItem = new ClipboardItem({ 'text/html': blob });
+      await navigator.clipboard.write([clipboardItem]);
+      toast({
+          title: "Copied!",
+          description: "Content copied to clipboard as HTML.",
+      });
+    } catch (err) {
+      console.error("Failed to copy HTML: ", err);
+      // Fallback to plain text copy
+      try {
+        await navigator.clipboard.writeText(html);
         toast({
-            title: "Copied!",
-            description: "Content copied to clipboard as HTML.",
+            title: "Copied as plain text!",
+            description: "Could not copy as HTML, but copied as plain text.",
         });
-    }).catch(err => {
-        console.error("Failed to copy HTML: ", err);
-        // Fallback to plain text copy
-        navigator.clipboard.writeText(html).then(() => {
-            toast({
-                title: "Copied as plain text!",
-                description: "Could not copy as HTML, but copied as plain text.",
-            });
-        }).catch(err => {
-            toast({
-                variant: "destructive",
-                title: "Error",
-                description: "Failed to copy content.",
-            });
+      } catch (err) {
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to copy content.",
         });
-    });
+      }
+    }
   };
 
   const downloadArticle = (article: Article) => {
@@ -435,5 +437,3 @@ export default function GSiteAutomatorPage() {
     </div>
   );
 }
-
-    
