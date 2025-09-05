@@ -17,14 +17,6 @@ type Article = {
   content: string;
 };
 
-// Helper to get a random item from an array
-const getRandomItem = <T>(arr: T[]): T => {
-    // Math.random() can cause hydration issues in Next.js.
-    // Using a pseudo-random method based on time and array length.
-    const index = (new Date().getTime() + Math.floor(1000 + Math.random() * 9000)) % arr.length;
-    return arr[index];
-}
-
 // Generate a pseudo-random alphanumeric string from a seed
 const generatePseudoRandomSuffix = (seed: string, length: number): string => {
     let hash = 0;
@@ -74,8 +66,9 @@ export async function generateArticles(
 
       const selectedSecondary: string[] = [];
       let selectionPool = [...availableSecondary];
+      // Use a deterministic way to select items to avoid hydration issues
       while (selectedSecondary.length < 2 && selectionPool.length > 0) {
-          const candidateIndex = (today.getTime() + i + selectedSecondary.length) % selectionPool.length;
+          const candidateIndex = (today.getSeconds() + i + selectedSecondary.length) % selectionPool.length;
           const candidate = selectionPool[candidateIndex];
           selectedSecondary.push(candidate);
           selectionPool.splice(candidateIndex, 1);
@@ -84,8 +77,7 @@ export async function generateArticles(
         selectedSecondary.push('');
       }
 
-      const keywordList = [primaryKeyword, secondaryKeyword, ...selectedSecondary];
-      const uniqueKeywordList = [...new Set(keywordList)];
+      const uniqueKeywordList = [...new Set([primaryKeyword, secondaryKeyword, ...selectedSecondary])];
       while (uniqueKeywordList.length < 4) {
         uniqueKeywordList.push('');
       }
