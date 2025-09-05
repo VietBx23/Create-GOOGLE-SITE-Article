@@ -5,7 +5,7 @@ import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { generateArticles } from "./actions";
+import { generateArticles, suggestArticleKeywords } from "./actions";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 
@@ -73,17 +73,14 @@ const KeywordSuggester = () => {
   const handleSuggest = () => {
     if (!topic) return;
     startSuggestion(async () => {
-      // Assuming suggestArticleKeywords is defined elsewhere, e.g., in './actions'
-      // const result = await suggestArticleKeywords(topic);
-      // For demonstration, using a mock result
-      const result = { success: true, suggestions: [`${topic} tips`, `${topic} guide`, `best ${topic} 2024`] };
+      const result = await suggestArticleKeywords(topic);
       if (result.success && result.suggestions) {
         setSuggestions(result.suggestions);
       } else {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Failed to get keyword suggestions.",
+          description: result.error || "Failed to get keyword suggestions.",
         });
       }
     });
@@ -93,15 +90,8 @@ const KeywordSuggester = () => {
     const textArea = document.createElement("textarea");
     textArea.value = text;
     textArea.style.position = "fixed"; 
-    textArea.style.top = "0";
-    textArea.style.left = "0";
-    textArea.style.width = "2em";
-    textArea.style.height = "2em";
-    textArea.style.padding = "0";
-    textArea.style.border = "none";
-    textArea.style.outline = "none";
-    textArea.style.boxShadow = "none";
-    textArea.style.background = "transparent";
+    textArea.style.top = "-9999px";
+    textArea.style.left = "-9999px";
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
@@ -274,15 +264,15 @@ export default function GSiteAutomatorPage() {
   const copyTitle = (title: string) => {
     copyToClipboardFallback(title, "Title");
   };
-
-  const copyHtmlContent = (htmlContent: string) => {
-    copyToClipboardFallback(htmlContent, "HTML Content");
-  };
   
   const convertHtmlToText = (html: string): string => {
+    if (typeof window === 'undefined') {
+      return '';
+    }
     const tempEl = document.createElement('div');
     tempEl.innerHTML = html;
     
+    // Replace link with "text (url)"
     const linkElement = tempEl.querySelector('a');
     if (linkElement) {
         const linkHref = linkElement.href;
@@ -290,11 +280,20 @@ export default function GSiteAutomatorPage() {
         linkElement.parentElement?.replaceWith(document.createTextNode(`\n${linkText} ${linkHref}\n`));
     }
     
+    // Replace <br> with newlines
     tempEl.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
     
+    // Get text content, which now includes newlines for <br>s
     let text = tempEl.textContent || "";
-    return text.replace(/\n\s*\n/g, '\n\n').trim();
+
+    // Tidy up whitespace
+    return text.replace(/(\n\s*){3,}/g, '\n\n').trim();
   }
+  
+  const copyHtmlContent = (htmlContent: string) => {
+    const textContent = convertHtmlToText(htmlContent);
+    copyToClipboardFallback(textContent, "Content");
+  };
 
   const downloadArticleAsTxt = (article: Article) => {
     const textContent = convertHtmlToText(article.content);
