@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useTransition, useEffect } from "react";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -63,18 +63,6 @@ type Article = {
   title: string;
   content: string;
 };
-
-// Helper to generate a random string on the client side
-const generateRandomString = (length: number): string => {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    // Math.random() is safe here because this function will only be called on the client.
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-};
-
 
 const KeywordSuggester = () => {
   const [topic, setTopic] = React.useState("");
@@ -220,15 +208,10 @@ export default function GSiteAutomatorPage() {
     startTransition(async () => {
       const result = await generateArticles(values);
       if (result.success && result.results) {
-        // Add random suffix on the client to avoid hydration issues
-        const clientSideArticles = result.results.map(article => ({
-            ...article,
-            title: `${article.title} ${generateRandomString(6)}`
-        }));
-        setArticles(clientSideArticles);
+        setArticles(result.results);
         toast({
           title: "Success!",
-          description: `Generated ${clientSideArticles.length} articles.`,
+          description: `Generated ${result.results.length} articles.`,
         });
       } else {
         toast({
@@ -283,6 +266,7 @@ export default function GSiteAutomatorPage() {
   };
   
   const copyHtmlContent = (htmlContent: string) => {
+    // This function now copies the raw HTML content.
     copyToClipboardFallback(htmlContent, "HTML Content");
   };
 
@@ -295,7 +279,8 @@ export default function GSiteAutomatorPage() {
     if (linkElement) {
         const linkText = linkElement.textContent || '';
         const linkHref = linkElement.href;
-        linkElement.parentElement?.replaceWith(document.createTextNode(`${linkText} ${linkHref}`));
+        // Replace the parent paragraph with the text and URL
+        linkElement.parentElement?.replaceWith(document.createTextNode(`\n${linkText} ${linkHref}\n`));
     }
     
     // Replace <br> tags with newlines

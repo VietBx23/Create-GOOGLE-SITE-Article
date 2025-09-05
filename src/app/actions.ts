@@ -67,10 +67,11 @@ export async function generateArticles(
       while (uniqueKeywordList.length < 4) {
         uniqueKeywordList.push('');
       }
-
+      
+      const randomSuffix = Math.random().toString(36).substring(2, 8);
       const fileSuffix = `${todayStr}-${validatedData.cy}|881比鸭`;
       
-      const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix}`;
+      const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
       
       let template = getRandomItem(TEMPLATES);
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
@@ -78,27 +79,18 @@ export async function generateArticles(
       
       const domain = `https://${validatedData.chosenLink}/`;
 
-      const contentBeforeLink = template.substring(0, template.indexOf('{mainLink}'));
-      const contentAfterLink = template.substring(template.indexOf('{mainLink}') + '{mainLink}'.length);
-
-      let processedContent = contentBeforeLink
-        .replace(/{title}/g, title)
-        .replace(/{app}/g, appFixed)
-        .replace(/{url}/g, urlFixed)
-        .replace(/{keywords_text}/g, keywordsText)
-        .replace(/{date}/g, date)
-        .replace(/{domain}/g, domain);
-      
-      let processedAfterLink = contentAfterLink
-        .replace(/{title}/g, title)
-        .replace(/{app}/g, appFixed)
-        .replace(/{url}/g, urlFixed)
-        .replace(/{keywords_text}/g, keywordsText)
-        .replace(/{date}/g, date)
-        .replace(/{domain}/g, domain);
-      
       const mainLink = `<p style="font-size: 3rem; text-align: left;"><a href="${domain}" target="_blank">👉👉立即进入👈👈</a></p>`;
-      const htmlContent = processedContent.replace(/\n/g, '<br />') + mainLink + processedAfterLink.replace(/\n/g, '<br />');
+      
+      let content = template
+        .replace(/{title}/g, title)
+        .replace(/{app}/g, appFixed)
+        .replace(/{url}/g, urlFixed)
+        .replace(/{keywords_text}/g, keywordsText)
+        .replace(/{date}/g, date)
+        .replace(/{domain}/g, domain)
+        .replace(/{mainLink}/g, mainLink);
+      
+      const htmlContent = content.replace(/\n/g, '<br />');
       
       results.push({ title, content: htmlContent });
     }
