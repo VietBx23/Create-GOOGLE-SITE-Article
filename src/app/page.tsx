@@ -12,11 +12,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import {
   Dialog,
@@ -65,17 +64,6 @@ type Article = {
   content: string;
 };
 
-// Helper to generate a random string
-const generateRandomString = (length: number): string => {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-};
-
-
 const KeywordSuggester = () => {
   const [topic, setTopic] = React.useState("");
   const [suggestions, setSuggestions] = React.useState<string[]>([]);
@@ -97,13 +85,55 @@ const KeywordSuggester = () => {
       }
     });
   };
+  
+  const copyToClipboardFallback = (text: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed"; 
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.width = "2em";
+    textArea.style.height = "2em";
+    textArea.style.padding = "0";
+    textArea.style.border = "none";
+    textArea.style.outline = "none";
+    textArea.style.boxShadow = "none";
+    textArea.style.background = "transparent";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand("copy");
+      toast({
+        title: "Copied!",
+        description: "Suggestions copied to clipboard.",
+      });
+    } catch (err) {
+       toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to copy suggestions.",
+      });
+    }
+    document.body.removeChild(textArea);
+  }
+
 
   const copySuggestions = () => {
     if (suggestions.length === 0) return;
-    navigator.clipboard.writeText(suggestions.join(", "));
-    toast({
-      title: "Copied!",
-      description: "Keyword suggestions copied to clipboard.",
+    const textToCopy = suggestions.join(", ");
+    if (!navigator.clipboard) {
+      copyToClipboardFallback(textToCopy);
+      return;
+    }
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      toast({
+        title: "Copied!",
+        description: "Keyword suggestions copied to clipboard.",
+      });
+    }, (err) => {
+       console.error("Failed to copy suggestions: ", err);
+       copyToClipboardFallback(textToCopy);
     });
   };
 
@@ -169,12 +199,7 @@ const KeywordSuggester = () => {
 export default function GSiteAutomatorPage() {
   const [isPending, startTransition] = useTransition();
   const [articles, setArticles] = React.useState<Article[]>([]);
-  const [isMounted, setIsMounted] = React.useState(false);
   const { toast } = useToast();
-
-  React.useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -204,16 +229,6 @@ export default function GSiteAutomatorPage() {
       }
     });
   };
-
-  // Add random suffix to title on client-side to avoid hydration mismatch
-  React.useEffect(() => {
-    if (articles.length > 0 && !articles[0].title.includes(" ")) {
-       setArticles(prevArticles => prevArticles.map(article => ({
-            ...article,
-            title: `${article.title} ${generateRandomString(6)}`
-        })));
-    }
-  }, [articles]);
   
   const presetLinks = ["183.run", "uu1.run", "uu2.run", "uu3.run", "za51.run", "za52.run", "za53.run"];
   const presetKeywords = ["黑料网"];
@@ -226,65 +241,63 @@ export default function GSiteAutomatorPage() {
     }
   };
 
-  const copyToClipboard = (text: string, type: string) => {
-    navigator.clipboard.writeText(text).then(() => {
+  const copyToClipboardFallback = (textToCopy: string, type: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = textToCopy;
+    textArea.style.position = "fixed";
+    textArea.style.top = "-9999px";
+    textArea.style.left = "-9999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
       toast({
         title: "Copied!",
         description: `${type} copied to clipboard.`,
       });
-    }).catch(err => {
+    } catch (err) {
       console.error(`Failed to copy ${type}:`, err);
       toast({
         variant: "destructive",
         title: "Error",
         description: `Failed to copy ${type}.`,
       });
-    });
-  };
-  
-  const copyHtmlToClipboard = (html: string) => {
-    try {
-      const blob = new Blob([html], { type: 'text/html' });
-      const clipboardItem = new ClipboardItem({ 'text/html': blob });
-      navigator.clipboard.write([clipboardItem]).then(() => {
-        toast({
-          title: "Copied!",
-          description: "Content copied to clipboard.",
-        });
-      }).catch(err => {
-        console.error('Failed to copy HTML:', err);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: "Could not copy content to clipboard.",
-        });
-      });
-    } catch (e) {
-        console.error('Failed to copy content:', e);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: `Failed to copy content: ${e}`,
-        });
+    } finally {
+      document.body.removeChild(textArea);
     }
   };
+  
+  const copyTitle = (title: string) => {
+    copyToClipboardFallback(title, "Title");
+  };
+
+  const copyHtmlContent = (html: string) => {
+     copyToClipboardFallback(html, "Content");
+  };
+
   
   const downloadArticleAsTxt = (article: Article) => {
     const tempEl = document.createElement('div');
     tempEl.innerHTML = article.content;
     
-    tempEl.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
-    tempEl.querySelectorAll('p').forEach(p => {
-        if (p.style.textAlign === 'left' && p.querySelector('a')) {
-             p.replaceWith(p.querySelector('a')?.href + '\n\n');
+    // This is a simplified conversion, might need refinement
+    tempEl.querySelectorAll('br').forEach(br => br.replaceWith('\\n'));
+    let text = article.title + '\\n\\n';
+    tempEl.childNodes.forEach(node => {
+        if (node.nodeName === 'P') {
+            const p = node as HTMLParagraphElement;
+            if (p.querySelector('a')) {
+                text += p.querySelector('a')?.href + '\\n\\n';
+            } else {
+                text += p.textContent + '\\n';
+            }
         } else {
-             p.replaceWith(p.textContent + '\n');
+             text += node.textContent;
         }
     });
 
-    const text = tempEl.textContent || '';
-
-    const blob = new Blob([article.title + '\n\n' + text], { type: 'text/plain;charset=utf-8' });
+    const blob = new Blob([text.replace(/\\n/g, '\n')], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -294,10 +307,6 @@ export default function GSiteAutomatorPage() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
-
-  if (!isMounted) {
-    return null; // or a loading spinner
-  }
 
   return (
     <div className="min-h-screen bg-background font-body text-foreground">
@@ -329,9 +338,8 @@ export default function GSiteAutomatorPage() {
               Fill in the details below to generate your articles.
             </CardDescription>
           </CardHeader>
-          <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-6 pt-0">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <FormLabel>Preset Primary Keywords</FormLabel>
@@ -435,7 +443,6 @@ Separated by commas or new lines."
                 </CardFooter>
               </form>
             </Form>
-          </CardContent>
         </Card>
 
         {articles.length > 0 && (
@@ -455,7 +462,7 @@ Separated by commas or new lines."
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyToClipboard(article.title, "Title")}
+                          onClick={() => copyTitle(article.title)}
                         >
                           <ClipboardCopy className="mr-2 h-4 w-4" />
                           Copy Title
@@ -463,7 +470,7 @@ Separated by commas or new lines."
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => copyHtmlToClipboard(article.content)}
+                          onClick={() => copyHtmlContent(article.content)}
                         >
                           <ClipboardCopy className="mr-2 h-4 w-4" />
                           Copy Content
