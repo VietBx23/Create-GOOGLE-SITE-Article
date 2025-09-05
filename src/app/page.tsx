@@ -234,7 +234,7 @@ export default function GSiteAutomatorPage() {
     }
   };
   
-  const copyToClipboardFallback = (textToCopy: string, type: 'Title' | 'Content' | 'HTML') => {
+  const copyToClipboardFallback = (textToCopy: string, type: 'Title' | 'Content') => {
     const textArea = document.createElement("textarea");
     textArea.value = textToCopy;
     textArea.style.position = "fixed";
@@ -266,7 +266,24 @@ export default function GSiteAutomatorPage() {
   };
 
   const copyHtmlContent = (htmlContent: string) => {
-    copyToClipboardFallback(htmlContent, 'HTML');
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+
+    const linkElement = tempDiv.querySelector('a');
+    if (linkElement) {
+        const linkText = linkElement.textContent || '';
+        const linkHref = linkElement.href;
+        // Replace the parent paragraph with plain text representation of the link
+        linkElement.parentElement?.replaceWith(document.createTextNode(`${linkText} ${linkHref}`));
+    }
+    
+    // Replace <br> with newline characters
+    tempDiv.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
+    
+    // Get the text content, which now includes the link text and URL
+    const textContent = tempDiv.textContent || '';
+
+    copyToClipboardFallback(textContent, 'Content');
   };
 
   const downloadArticleAsTxt = (article: Article) => {
@@ -483,4 +500,5 @@ Separated by commas or new lines."
       </main>
     </div>
   );
-}
+
+    
