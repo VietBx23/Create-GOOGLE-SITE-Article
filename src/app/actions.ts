@@ -68,10 +68,9 @@ export async function generateArticles(
         uniqueKeywordList.push('');
       }
       
-      const randomSuffix = Math.random().toString(36).substring(2, 8);
       const fileSuffix = `${todayStr}-${validatedData.cy}|881比鸭`;
       
-      const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
+      const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix}`;
       
       let template = getRandomItem(TEMPLATES);
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
@@ -90,6 +89,7 @@ export async function generateArticles(
         .replace(/{domain}/g, domain)
         .replace(/{mainLink}/g, mainLink);
       
+      // Replace newline characters with <br /> for HTML display
       const htmlContent = content.replace(/\n/g, '<br />');
       
       results.push({ title, content: htmlContent });

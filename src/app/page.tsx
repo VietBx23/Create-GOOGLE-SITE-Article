@@ -208,10 +208,15 @@ export default function GSiteAutomatorPage() {
     startTransition(async () => {
       const result = await generateArticles(values);
       if (result.success && result.results) {
-        setArticles(result.results);
+        // Add random suffix to title on the client-side to avoid hydration issues
+        const clientSideResults = result.results.map(article => ({
+            ...article,
+            title: `${article.title} ${Math.random().toString(36).substring(2, 8)}`
+        }));
+        setArticles(clientSideResults);
         toast({
           title: "Success!",
-          description: `Generated ${result.results.length} articles.`,
+          description: `Generated ${clientSideResults.length} articles.`,
         });
       } else {
         toast({
@@ -233,13 +238,14 @@ export default function GSiteAutomatorPage() {
       form.setValue("primaryKeywords", current ? `${current}, ${keyword}` : keyword);
     }
   };
-  
-  const copyToClipboardFallback = (textToCopy: string, type: 'Title' | 'Content') => {
+
+  const copyToClipboard = (textToCopy: string, type: 'Title' | 'Content' | 'HTML') => {
     const textArea = document.createElement("textarea");
     textArea.value = textToCopy;
+    // Make the textarea out of viewport
     textArea.style.position = "fixed";
-    textArea.style.top = "-9999px";
     textArea.style.left = "-9999px";
+    textArea.style.top = "-9999px";
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
@@ -260,30 +266,13 @@ export default function GSiteAutomatorPage() {
       document.body.removeChild(textArea);
     }
   };
-
+  
   const copyTitle = (title: string) => {
-    copyToClipboardFallback(title, "Title");
+    copyToClipboard(title, "Title");
   };
 
   const copyHtmlContent = (htmlContent: string) => {
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlContent;
-
-    const linkElement = tempDiv.querySelector('a');
-    if (linkElement) {
-        const linkText = linkElement.textContent || '';
-        const linkHref = linkElement.href;
-        // Replace the parent paragraph with plain text representation of the link
-        linkElement.parentElement?.replaceWith(document.createTextNode(`${linkText} ${linkHref}`));
-    }
-    
-    // Replace <br> with newline characters
-    tempDiv.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
-    
-    // Get the text content, which now includes the link text and URL
-    const textContent = tempDiv.textContent || '';
-
-    copyToClipboardFallback(textContent, 'Content');
+    copyToClipboard(htmlContent, "HTML");
   };
 
   const downloadArticleAsTxt = (article: Article) => {
@@ -500,5 +489,4 @@ Separated by commas or new lines."
       </main>
     </div>
   );
-
-    
+}
