@@ -64,17 +64,6 @@ type Article = {
   content: string;
 };
 
-// Helper to generate a random string
-const generateRandomString = (length: number): string => {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-};
-
-
 const KeywordSuggester = () => {
   const [topic, setTopic] = React.useState("");
   const [suggestions, setSuggestions] = React.useState<string[]>([]);
@@ -229,15 +218,10 @@ export default function GSiteAutomatorPage() {
     startTransition(async () => {
       const result = await generateArticles(values);
       if (result.success && result.results) {
-        // Add random suffix on client-side to avoid hydration mismatch
-        const updatedResults = result.results.map(article => ({
-            ...article,
-            title: `${article.title} ${generateRandomString(6)}`,
-        }));
-        setArticles(updatedResults);
+        setArticles(result.results);
         toast({
           title: "Success!",
-          description: `Generated ${updatedResults.length} articles.`,
+          description: `Generated ${result.results.length} articles.`,
         });
       } else {
         toast({
@@ -286,45 +270,37 @@ export default function GSiteAutomatorPage() {
       document.body.removeChild(textArea);
     }
   };
-  
+
   const copyTitle = (title: string) => {
     copyToClipboardFallback(title, "Title");
   };
 
+  const copyHtmlContent = (htmlContent: string) => {
+    copyToClipboardFallback(htmlContent, "HTML Content");
+  };
+  
   const convertHtmlToText = (html: string): string => {
     const tempEl = document.createElement('div');
     tempEl.innerHTML = html;
-
-    // Handle the main link specially
+    
     const linkElement = tempEl.querySelector('a');
     if (linkElement) {
         const linkHref = linkElement.href;
-        // Replace the parent paragraph with the link text and URL
-        linkElement.parentElement?.replaceWith(document.createTextNode(`\n${linkElement.textContent} ${linkHref}\n`));
+        const linkText = linkElement.textContent || "";
+        linkElement.parentElement?.replaceWith(document.createTextNode(`\n${linkText} ${linkHref}\n`));
     }
     
-    // Replace <br> with newlines
     tempEl.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
     
-    // Get text content, which strips remaining HTML tags
-    let text = tempEl.textContent || tempEl.innerText || "";
-    
-    // Normalize newlines
-    text = text.replace(/\n\s*\n/g, '\n\n').trim();
-
-    return text;
+    let text = tempEl.textContent || "";
+    return text.replace(/\n\s*\n/g, '\n\n').trim();
   }
 
-  const copyHtmlContent = (html: string) => {
-    const textToCopy = convertHtmlToText(html);
-    copyToClipboardFallback(textToCopy, "Content");
-  };
-  
   const downloadArticleAsTxt = (article: Article) => {
     const textContent = convertHtmlToText(article.content);
-    const text = `${article.title}\n\n${textContent}`;
+    const textToDownload = `${article.title}\n\n${textContent}`;
 
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const blob = new Blob([textToDownload], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;

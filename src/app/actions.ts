@@ -108,12 +108,9 @@ export async function generateArticles(
         .replace(/{keywords_text}/g, keywordsText)
         .replace(/{date}/g, date)
         .replace(/{domain}/g, domain);
-
-      processedContent = processedContent.replace(/\n/g, '<br />');
-      processedAfterLink = processedAfterLink.replace(/\n/g, '<br />');
       
       const mainLink = `<p style="font-size: 3rem; text-align: left;"><a href="${domain}" target="_blank">👉👉立即进入👈👈</a></p>`;
-      const htmlContent = processedContent + mainLink + processedAfterLink;
+      const htmlContent = processedContent.replace(/\n/g, '<br />') + mainLink + processedAfterLink.replace(/\n/g, '<br />');
       
       results.push({ title, content: htmlContent });
     }
