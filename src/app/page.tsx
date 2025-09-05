@@ -233,7 +233,7 @@ export default function GSiteAutomatorPage() {
       form.setValue("primaryKeywords", current ? `${current}, ${keyword}` : keyword);
     }
   };
-
+  
   const copyToClipboardFallback = (textToCopy: string, type: string) => {
     const textArea = document.createElement("textarea");
     textArea.value = textToCopy;
@@ -266,24 +266,32 @@ export default function GSiteAutomatorPage() {
   };
   
   const copyHtmlContent = (htmlContent: string) => {
-    // This function now copies the raw HTML content.
-    copyToClipboardFallback(htmlContent, "HTML Content");
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+
+    const linkElement = tempDiv.querySelector('a');
+    if (linkElement) {
+        const linkText = linkElement.textContent || '';
+        const linkHref = linkElement.href;
+        linkElement.parentElement?.replaceWith(document.createTextNode(`${linkText} ${linkHref}`));
+    }
+    
+    tempDiv.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
+    const textContent = (tempDiv.textContent || '').replace(/\n\n/g, '\n');
+    copyToClipboardFallback(textContent.trim(), "Content");
   };
 
   const downloadArticleAsTxt = (article: Article) => {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = article.content;
 
-    // Handle the link separately to ensure it's formatted correctly as text
     const linkElement = tempDiv.querySelector('a');
     if (linkElement) {
         const linkText = linkElement.textContent || '';
         const linkHref = linkElement.href;
-        // Replace the parent paragraph with the text and URL
         linkElement.parentElement?.replaceWith(document.createTextNode(`\n${linkText} ${linkHref}\n`));
     }
     
-    // Replace <br> tags with newlines
     tempDiv.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
 
     const textContent = tempDiv.textContent || '';
