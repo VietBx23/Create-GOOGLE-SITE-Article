@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useTransition } from "react";
+import { useTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -63,6 +63,18 @@ type Article = {
   title: string;
   content: string;
 };
+
+// Helper to generate a random string on the client side
+const generateRandomString = (length: number): string => {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    // Math.random() is safe here because this function will only be called on the client.
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
 
 const KeywordSuggester = () => {
   const [topic, setTopic] = React.useState("");
@@ -208,10 +220,15 @@ export default function GSiteAutomatorPage() {
     startTransition(async () => {
       const result = await generateArticles(values);
       if (result.success && result.results) {
-        setArticles(result.results);
+        // Add random suffix on the client to avoid hydration issues
+        const clientSideArticles = result.results.map(article => ({
+            ...article,
+            title: `${article.title} ${generateRandomString(6)}`
+        }));
+        setArticles(clientSideArticles);
         toast({
           title: "Success!",
-          description: `Generated ${result.results.length} articles.`,
+          description: `Generated ${clientSideArticles.length} articles.`,
         });
       } else {
         toast({
@@ -265,39 +282,27 @@ export default function GSiteAutomatorPage() {
     copyToClipboardFallback(title, "Title");
   };
   
-  const convertHtmlToText = (html: string): string => {
-    if (typeof window === 'undefined') {
-      return '';
-    }
-    const tempEl = document.createElement('div');
-    tempEl.innerHTML = html;
-    
-    // Replace link with "text (url)"
-    const linkElement = tempEl.querySelector('a');
-    if (linkElement) {
-        const linkHref = linkElement.href;
-        const linkText = linkElement.textContent || "";
-        linkElement.parentElement?.replaceWith(document.createTextNode(`\n${linkText} ${linkHref}\n`));
-    }
-    
-    // Replace <br> with newlines
-    tempEl.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
-    
-    // Get text content, which now includes newlines for <br>s
-    let text = tempEl.textContent || "";
-
-    // Tidy up whitespace
-    return text.replace(/(\n\s*){3,}/g, '\n\n').trim();
-  }
-  
   const copyHtmlContent = (htmlContent: string) => {
-    const textContent = convertHtmlToText(htmlContent);
-    copyToClipboardFallback(textContent, "Content");
+    copyToClipboardFallback(htmlContent, "HTML Content");
   };
 
   const downloadArticleAsTxt = (article: Article) => {
-    const textContent = convertHtmlToText(article.content);
-    const textToDownload = `${article.title}\n\n${textContent}`;
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = article.content;
+
+    // Handle the link separately to ensure it's formatted correctly as text
+    const linkElement = tempDiv.querySelector('a');
+    if (linkElement) {
+        const linkText = linkElement.textContent || '';
+        const linkHref = linkElement.href;
+        linkElement.parentElement?.replaceWith(document.createTextNode(`${linkText} ${linkHref}`));
+    }
+    
+    // Replace <br> tags with newlines
+    tempDiv.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
+
+    const textContent = tempDiv.textContent || '';
+    const textToDownload = `${article.title}\n\n${textContent.trim()}`;
 
     const blob = new Blob([textToDownload], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);

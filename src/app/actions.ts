@@ -23,17 +23,6 @@ const getRandomItem = <T>(arr: T[]): T => {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
-// Helper to generate a random string
-const generateRandomString = (length: number): string => {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-};
-
-
 export async function generateArticles(
   values: z.infer<typeof formSchema>
 ): Promise<{ success: boolean; results?: Article[]; error?: string }> {
@@ -81,8 +70,7 @@ export async function generateArticles(
 
       const fileSuffix = `${todayStr}-${validatedData.cy}|881比鸭`;
       
-      const randomSuffix = generateRandomString(6);
-      const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
+      const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix}`;
       
       let template = getRandomItem(TEMPLATES);
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
