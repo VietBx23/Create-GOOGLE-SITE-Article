@@ -19,14 +19,28 @@ type Article = {
 
 // Helper to get a random item from an array
 const getRandomItem = <T>(arr: T[]): T => {
-    // Math.random() is safe to use in server actions
-    return arr[Math.floor(Math.random() * arr.length)];
+    // Math.random() can cause hydration issues in Next.js.
+    // Using a pseudo-random method based on time and array length.
+    const index = (new Date().getTime() + Math.floor(1000 + Math.random() * 9000)) % arr.length;
+    return arr[index];
 }
 
-// Generate a random alphanumeric string
-const generateRandomSuffix = (): string => {
-    // Using a timestamp-based suffix to avoid hydration issues with Math.random() on the client.
-    return Date.now().toString(36).slice(-6);
+// Generate a pseudo-random alphanumeric string from a seed
+const generatePseudoRandomSuffix = (seed: string, length: number): string => {
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+        const char = seed.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash |= 0; // Convert to 32bit integer
+    }
+
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        hash = (hash * 16807 + i) % 2147483647;
+        result += chars.charAt(Math.abs(hash) % chars.length);
+    }
+    return result;
 };
 
 
@@ -47,23 +61,24 @@ export async function generateArticles(
     const today = new Date();
     const todayStr = format(today, 'MMdd');
 
-    for (const secondaryKeyword of secondaryKeywords) {
-      const appFixed = getRandomItem(FIXED_APPS);
-      const urlFixed = getRandomItem(FIXED_URLS);
-      const primaryKeyword = getRandomItem(primaryKeywords);
+    for (let i = 0; i < secondaryKeywords.length; i++) {
+      const secondaryKeyword = secondaryKeywords[i];
+      const appFixed = FIXED_APPS[i % FIXED_APPS.length];
+      const urlFixed = FIXED_URLS[i % FIXED_URLS.length];
+      const primaryKeyword = primaryKeywords[i % primaryKeywords.length];
+
 
       const availableSecondary = secondaryKeywords.filter(
         k => k !== secondaryKeyword && k !== primaryKeyword
       );
 
       const selectedSecondary: string[] = [];
-      while (selectedSecondary.length < 2 && availableSecondary.length > 0) {
-        const candidate = getRandomItem(availableSecondary);
-        if (!selectedSecondary.includes(candidate)) {
+      let selectionPool = [...availableSecondary];
+      while (selectedSecondary.length < 2 && selectionPool.length > 0) {
+          const candidateIndex = (today.getTime() + i + selectedSecondary.length) % selectionPool.length;
+          const candidate = selectionPool[candidateIndex];
           selectedSecondary.push(candidate);
-          const indexToRemove = availableSecondary.indexOf(candidate);
-          availableSecondary.splice(indexToRemove, 1);
-        }
+          selectionPool.splice(candidateIndex, 1);
       }
       while (selectedSecondary.length < 2) {
         selectedSecondary.push('');
@@ -76,13 +91,15 @@ export async function generateArticles(
       }
       
       const fileSuffix = `${todayStr}-${validatedData.cy}|881比鸭`;
-      const randomSuffix = generateRandomSuffix();
+      const seed = `${primaryKeyword}${secondaryKeyword}${i}`;
+      const randomSuffix = generatePseudoRandomSuffix(seed, 6);
       const domain = `https://${validatedData.chosenLink}/`;
+      const linkHtml = `<a href="${domain}" target="_blank">${validatedData.chosenLink}</a>`;
       
-      const titleWithLink = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：<a href="${domain}" target="_blank">${validatedData.chosenLink}</a>】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
+      const titleWithLink = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${linkHtml}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
       const plainTitle = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
       
-      let template = getRandomItem(TEMPLATES);
+      let template = TEMPLATES[i % TEMPLATES.length];
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
       const date = format(today, 'yyyy-MM-dd');
 
