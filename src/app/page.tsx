@@ -190,14 +190,10 @@ export default function GSiteAutomatorPage() {
     startTransition(async () => {
       const result = await generateArticles(values);
       if (result.success && result.results) {
-        const articlesWithRandomSuffix = result.results.map(article => ({
-            ...article,
-            title: `${article.title} ${generateRandomString(6)}`
-        }));
-        setArticles(articlesWithRandomSuffix);
+        setArticles(result.results);
         toast({
           title: "Success!",
-          description: `Generated ${articlesWithRandomSuffix.length} articles.`,
+          description: `Generated ${result.results.length} articles.`,
         });
       } else {
         toast({
@@ -208,6 +204,16 @@ export default function GSiteAutomatorPage() {
       }
     });
   };
+
+  // Add random suffix to title on client-side to avoid hydration mismatch
+  React.useEffect(() => {
+    if (articles.length > 0 && !articles[0].title.includes(" ")) {
+       setArticles(prevArticles => prevArticles.map(article => ({
+            ...article,
+            title: `${article.title} ${generateRandomString(6)}`
+        })));
+    }
+  }, [articles]);
   
   const presetLinks = ["183.run", "uu1.run", "uu2.run", "uu3.run", "za51.run", "za52.run", "za53.run"];
   const presetKeywords = ["黑料网"];
@@ -221,45 +227,62 @@ export default function GSiteAutomatorPage() {
   };
 
   const copyToClipboard = (text: string, type: string) => {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = 'absolute';
-    textArea.style.left = '-9999px';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-      document.execCommand('copy');
+    navigator.clipboard.writeText(text).then(() => {
       toast({
         title: "Copied!",
         description: `${type} copied to clipboard.`,
       });
-    } catch (err) {
+    }).catch(err => {
       console.error(`Failed to copy ${type}:`, err);
       toast({
         variant: "destructive",
         title: "Error",
         description: `Failed to copy ${type}.`,
       });
-    }
-    document.body.removeChild(textArea);
+    });
   };
   
-  const copyHtmlAsTextToClipboard = (html: string) => {
-    const tempEl = document.createElement('div');
-    tempEl.innerHTML = html;
-
-    tempEl.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
-    tempEl.querySelectorAll('p').forEach(p => p.replaceWith(p.textContent + '\n'));
-    
-    const text = tempEl.textContent || '';
-    copyToClipboard(text.trim(), "Content");
+  const copyHtmlToClipboard = (html: string) => {
+    try {
+      const blob = new Blob([html], { type: 'text/html' });
+      const clipboardItem = new ClipboardItem({ 'text/html': blob });
+      navigator.clipboard.write([clipboardItem]).then(() => {
+        toast({
+          title: "Copied!",
+          description: "Content copied to clipboard.",
+        });
+      }).catch(err => {
+        console.error('Failed to copy HTML:', err);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Could not copy content to clipboard.",
+        });
+      });
+    } catch (e) {
+        console.error('Failed to copy content:', e);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: `Failed to copy content: ${e}`,
+        });
+    }
   };
   
   const downloadArticleAsTxt = (article: Article) => {
     const tempEl = document.createElement('div');
     tempEl.innerHTML = article.content;
-    const text = tempEl.innerText || '';
+    
+    tempEl.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
+    tempEl.querySelectorAll('p').forEach(p => {
+        if (p.style.textAlign === 'left' && p.querySelector('a')) {
+             p.replaceWith(p.querySelector('a')?.href + '\n\n');
+        } else {
+             p.replaceWith(p.textContent + '\n');
+        }
+    });
+
+    const text = tempEl.textContent || '';
 
     const blob = new Blob([article.title + '\n\n' + text], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -428,37 +451,34 @@ Separated by commas or new lines."
                        <CardTitle className="text-lg flex-1">
                         {index + 1}. {article.title}
                        </CardTitle>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => copyToClipboard(article.title, "Title")}
-                      >
-                        <ClipboardCopy className="h-5 w-5" />
-                        <span className="sr-only">Copy Title</span>
-                      </Button>
+                      <div className="flex flex-col sm:flex-row gap-2 items-start">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => copyToClipboard(article.title, "Title")}
+                        >
+                          <ClipboardCopy className="mr-2 h-4 w-4" />
+                          Copy Title
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyHtmlToClipboard(article.content)}
+                        >
+                          <ClipboardCopy className="mr-2 h-4 w-4" />
+                          Copy Content
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => downloadArticleAsTxt(article)}
+                        >
+                          <Download className="mr-2 h-4 w-4" />
+                          Download
+                        </Button>
+                      </div>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="prose dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: article.content }} />
-                    <div className="flex flex-col sm:flex-row gap-2 mt-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => copyHtmlAsTextToClipboard(article.content)}
-                      >
-                        <ClipboardCopy className="mr-2 h-4 w-4" />
-                        Copy Content
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => downloadArticleAsTxt(article)}
-                      >
-                        <Download className="mr-2 h-4 w-4" />
-                        Download Article
-                      </Button>
-                    </div>
-                  </CardContent>
                 </Card>
               ))}
             </div>
