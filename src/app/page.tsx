@@ -208,15 +208,10 @@ export default function GSiteAutomatorPage() {
     startTransition(async () => {
       const result = await generateArticles(values);
       if (result.success && result.results) {
-        // Add random suffix to title on the client-side to avoid hydration issues
-        const clientSideResults = result.results.map(article => ({
-            ...article,
-            title: `${article.title} ${Math.random().toString(36).substring(2, 8)}`
-        }));
-        setArticles(clientSideResults);
+        setArticles(result.results);
         toast({
           title: "Success!",
-          description: `Generated ${clientSideResults.length} articles.`,
+          description: `Generated ${result.results.length} articles.`,
         });
       } else {
         toast({
@@ -239,7 +234,7 @@ export default function GSiteAutomatorPage() {
     }
   };
 
-  const copyToClipboard = (textToCopy: string, type: 'Title' | 'Content' | 'HTML') => {
+  const copyToClipboard = (textToCopy: string, type: 'Title' | 'Content') => {
     const textArea = document.createElement("textarea");
     textArea.value = textToCopy;
     // Make the textarea out of viewport
@@ -271,25 +266,30 @@ export default function GSiteAutomatorPage() {
     copyToClipboard(title, "Title");
   };
 
-  const copyHtmlContent = (htmlContent: string) => {
-    copyToClipboard(htmlContent, "HTML");
-  };
-
-  const downloadArticleAsTxt = (article: Article) => {
+  const convertHtmlToPlainText = (html: string): string => {
     const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = article.content;
+    tempDiv.innerHTML = html;
 
     const linkElement = tempDiv.querySelector('a');
     if (linkElement) {
         const linkText = linkElement.textContent || '';
         const linkHref = linkElement.href;
-        linkElement.parentElement?.replaceWith(document.createTextNode(`\n${linkText} ${linkHref}\n`));
+        linkElement.parentElement?.replaceWith(document.createTextNode(`\n${linkText} (${linkHref})\n`));
     }
     
     tempDiv.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
+    
+    return tempDiv.textContent || '';
+  }
 
-    const textContent = tempDiv.textContent || '';
-    const textToDownload = `${article.title}\n\n${textContent.trim()}`;
+  const copyContentAsPlainText = (htmlContent: string) => {
+    const plainText = convertHtmlToPlainText(htmlContent);
+    copyToClipboard(plainText.trim(), "Content");
+  };
+
+  const downloadArticleAsTxt = (article: Article) => {
+    const plainText = convertHtmlToPlainText(article.content);
+    const textToDownload = `${article.title}\n\n${plainText.trim()}`;
 
     const blob = new Blob([textToDownload], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -465,7 +465,7 @@ Separated by commas or new lines."
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => copyHtmlContent(article.content)}
+                          onClick={() => copyContentAsPlainText(article.content)}
                         >
                           <ClipboardCopy className="mr-2 h-4 w-4" />
                           Copy Content

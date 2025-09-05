@@ -23,6 +23,17 @@ const getRandomItem = <T>(arr: T[]): T => {
     return arr[Math.floor(Math.random() * arr.length)];
 }
 
+// Generate a random alphanumeric string
+const generateRandomSuffix = (length: number): string => {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+};
+
+
 export async function generateArticles(
   values: z.infer<typeof formSchema>
 ): Promise<{ success: boolean; results?: Article[]; error?: string }> {
@@ -69,8 +80,9 @@ export async function generateArticles(
       }
       
       const fileSuffix = `${todayStr}-${validatedData.cy}|881比鸭`;
+      const randomSuffix = generateRandomSuffix(6);
       
-      const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix}`;
+      const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
       
       let template = getRandomItem(TEMPLATES);
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
@@ -89,7 +101,6 @@ export async function generateArticles(
         .replace(/{domain}/g, domain)
         .replace(/{mainLink}/g, mainLink);
       
-      // Replace newline characters with <br /> for HTML display
       const htmlContent = content.replace(/\n/g, '<br />');
       
       results.push({ title, content: htmlContent });
