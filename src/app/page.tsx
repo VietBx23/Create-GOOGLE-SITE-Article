@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import * as React from "react";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -64,9 +65,20 @@ type Article = {
   content: string;
 };
 
+// Helper to generate a random string
+const generateRandomString = (length: number): string => {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
+
 const KeywordSuggester = () => {
-  const [topic, setTopic] = useState("");
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [topic, setTopic] = React.useState("");
+  const [suggestions, setSuggestions] = React.useState<string[]>([]);
   const [isSuggesting, startSuggestion] = useTransition();
   const { toast } = useToast();
 
@@ -156,7 +168,7 @@ const KeywordSuggester = () => {
 
 export default function GSiteAutomatorPage() {
   const [isPending, startTransition] = useTransition();
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [articles, setArticles] = React.useState<Article[]>([]);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -174,10 +186,14 @@ export default function GSiteAutomatorPage() {
       setArticles([]);
       const result = await generateArticles(values);
       if (result.success && result.results) {
-        setArticles(result.results);
+        const articlesWithRandomSuffix = result.results.map(article => ({
+            ...article,
+            title: `${article.title} ${generateRandomString(6)}`
+        }));
+        setArticles(articlesWithRandomSuffix);
         toast({
           title: "Success!",
-          description: `Generated ${result.results.length} articles.`,
+          description: `Generated ${articlesWithRandomSuffix.length} articles.`,
         });
       } else {
         toast({
@@ -208,26 +224,25 @@ export default function GSiteAutomatorPage() {
     });
   };
   
-  const copyHtmlToClipboard = (html: string) => {
-    const textarea = document.createElement('textarea');
-    textarea.innerHTML = html;
-    document.body.appendChild(textarea);
-    textarea.select();
+  const copyHtmlAsTextToClipboard = (html: string) => {
     try {
-      document.execCommand('copy');
+      const tempEl = document.createElement('div');
+      tempEl.innerHTML = html;
+      tempEl.querySelectorAll('br').forEach(br => br.replaceWith('\\n'));
+      const text = tempEl.textContent || '';
+      navigator.clipboard.writeText(text.trim());
       toast({
           title: "Copied!",
-          description: "Content copied to clipboard as HTML.",
+          description: "Content copied to clipboard as plain text.",
       });
     } catch (err) {
-      console.error("Failed to copy HTML: ", err);
+      console.error("Failed to copy content: ", err);
       toast({
           variant: "destructive",
           title: "Error",
           description: "Failed to copy content.",
       });
     }
-    document.body.removeChild(textarea);
   };
 
   const downloadArticle = (article: Article) => {
@@ -409,7 +424,7 @@ Separated by commas or new lines."
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => copyHtmlToClipboard(article.content)}
+                        onClick={() => copyHtmlAsTextToClipboard(article.content)}
                       >
                         <ClipboardCopy className="mr-2 h-4 w-4" />
                         Copy Content
@@ -433,3 +448,5 @@ Separated by commas or new lines."
     </div>
   );
 }
+
+    

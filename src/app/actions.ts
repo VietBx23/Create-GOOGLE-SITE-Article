@@ -18,17 +18,10 @@ type Article = {
 };
 
 // Helper to get a random item from an array
-const getRandomItem = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
-
-// Helper to generate a random string
-const generateRandomString = (length: number): string => {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-};
+const getRandomItem = <T>(arr: T[]): T => {
+    // Math.random() is safe to use in server actions
+    return arr[Math.floor(Math.random() * arr.length)];
+}
 
 export async function generateArticles(
   values: z.infer<typeof formSchema>
@@ -76,9 +69,8 @@ export async function generateArticles(
       }
 
       const fileSuffix = `${todayStr}-cy|881比鸭`;
-      const randomStr = generateRandomString(6);
-
-      const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomStr}`;
+      
+      const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix}`;
       
       let template = getRandomItem(TEMPLATES);
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
@@ -94,12 +86,10 @@ export async function generateArticles(
         .replace(/{date}/g, date)
         .replace(/{domain}/g, domain);
       
-      // Split the content by the link placeholder and process newlines separately
       const parts = content.split('{mainLink}');
       const processedParts = parts.map(part => part.replace(/\n/g, '<br />'));
       const mainLink = `<p style="font-size: 3rem; text-align: left;"><a href="${domain}" target="_blank">👉👉立即进入👈👈</a></p>`;
       const htmlContent = processedParts.join(mainLink);
-
       
       results.push({ title, content: htmlContent });
     }
@@ -129,3 +119,5 @@ export async function suggestArticleKeywords(
     return { success: false, error: 'Failed to communicate with AI model.' };
   }
 }
+
+    
