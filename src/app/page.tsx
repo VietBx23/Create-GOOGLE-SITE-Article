@@ -240,7 +240,7 @@ export default function GSiteAutomatorPage() {
       form.setValue("primaryKeywords", current ? `${current}, ${keyword}` : keyword);
     }
   };
-
+  
   const copyToClipboardFallback = (textToCopy: string, type: string) => {
     const textArea = document.createElement("textarea");
     textArea.value = textToCopy;
@@ -275,29 +275,35 @@ export default function GSiteAutomatorPage() {
   const copyHtmlContent = (html: string) => {
      copyToClipboardFallback(html, "Content");
   };
-
   
   const downloadArticleAsTxt = (article: Article) => {
     const tempEl = document.createElement('div');
     tempEl.innerHTML = article.content;
     
-    // This is a simplified conversion, might need refinement
-    tempEl.querySelectorAll('br').forEach(br => br.replaceWith('\\n'));
-    let text = article.title + '\\n\\n';
-    tempEl.childNodes.forEach(node => {
-        if (node.nodeName === 'P') {
-            const p = node as HTMLParagraphElement;
-            if (p.querySelector('a')) {
-                text += p.querySelector('a')?.href + '\\n\\n';
-            } else {
-                text += p.textContent + '\\n';
-            }
+    // Replace <p> with newline, <br> with newline, and extract text from <a>
+    tempEl.querySelectorAll('p, br').forEach(el => {
+      if (el.tagName === 'P') {
+        const p = el as HTMLParagraphElement;
+        const a = p.querySelector('a');
+        if (a) {
+          // Replace the whole <p> tag with the link's href and two newlines
+          p.replaceWith(document.createTextNode(`${a.href}\n\n`));
         } else {
-             text += node.textContent;
+           // Add a newline after other <p> tags
+          p.after(document.createTextNode('\n'));
         }
+      } else { // BR tag
+         el.replaceWith(document.createTextNode('\n'));
+      }
     });
 
-    const blob = new Blob([text.replace(/\\n/g, '\n')], { type: 'text/plain;charset=utf-8' });
+    // Get the processed text content
+    let text = `${article.title}\n\n${tempEl.textContent || tempEl.innerText}`;
+    
+    // Cleanup extra blank lines
+    text = text.replace(/\n\s*\n/g, '\n\n');
+
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -307,6 +313,7 @@ export default function GSiteAutomatorPage() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
+
 
   return (
     <div className="min-h-screen bg-background font-body text-foreground">
