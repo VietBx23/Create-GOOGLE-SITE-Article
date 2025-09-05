@@ -1,3 +1,377 @@
-export default function Home() {
-  return <></>;
+"use client";
+
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { generateArticles, suggestArticleKeywords } from "./actions";
+import { useToast } from "@/hooks/use-toast";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  FileText,
+  Key,
+  Tags,
+  CalendarDays,
+  Link as LinkIcon,
+  Sparkles,
+  ClipboardCopy,
+  Loader2,
+  Copy,
+} from "lucide-react";
+
+const formSchema = z.object({
+  primaryKeywords: z.string().min(1, "Please enter at least one primary keyword."),
+  secondaryKeywords: z.string().min(1, "Please enter at least one secondary keyword."),
+  cy: z.string().min(1, "Please enter a CY value."),
+  chosenLink: z.string().min(1, "Please provide a link."),
+});
+
+type Article = {
+  title: string;
+  content: string;
+};
+
+const KeywordSuggester = () => {
+  const [topic, setTopic] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isSuggesting, startSuggestion] = useTransition();
+  const { toast } = useToast();
+
+  const handleSuggest = () => {
+    if (!topic) return;
+    startSuggestion(async () => {
+      const result = await suggestArticleKeywords(topic);
+      if (result.success && result.suggestions) {
+        setSuggestions(result.suggestions);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: result.error || "Failed to get keyword suggestions.",
+        });
+      }
+    });
+  };
+
+  const copySuggestions = () => {
+    if (suggestions.length === 0) return;
+    navigator.clipboard.writeText(suggestions.join(", "));
+    toast({
+      title: "Copied!",
+      description: "Keyword suggestions copied to clipboard.",
+    });
+  };
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Sparkles className="mr-2 h-4 w-4" />
+          AI Keyword Suggester
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>AI Keyword Suggester</DialogTitle>
+          <DialogDescription>
+            Enter a topic to get AI-powered keyword suggestions.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="topic" className="text-right">
+              Topic
+            </Label>
+            <Input
+              id="topic"
+              value={topic}
+              onChange={(e) => setTopic(e.target.value)}
+              className="col-span-3"
+              placeholder="e.g., 'Digital Marketing Trends'"
+            />
+          </div>
+          <Button onClick={handleSuggest} disabled={isSuggesting || !topic}>
+            {isSuggesting ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Sparkles className="mr-2 h-4 w-4" />
+            )}
+            Suggest Keywords
+          </Button>
+          {suggestions.length > 0 && (
+            <div className="space-y-2">
+              <h4 className="font-medium">Suggestions:</h4>
+              <div className="flex flex-wrap gap-2">
+                {suggestions.map((s, i) => (
+                  <Badge key={i} variant="secondary">
+                    {s}
+                  </Badge>
+                ))}
+              </div>
+              <Button variant="ghost" size="sm" onClick={copySuggestions} className="mt-2">
+                <Copy className="mr-2 h-4 w-4" />
+                Copy All
+              </Button>
+            </div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+
+export default function GSiteAutomatorPage() {
+  const [isPending, startTransition] = useTransition();
+  const [articles, setArticles] = useState<Article[]>([]);
+  const { toast } = useToast();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      primaryKeywords: "",
+      secondaryKeywords: "",
+      cy: "",
+      chosenLink: "",
+    },
+  });
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    startTransition(async () => {
+      setArticles([]);
+      const result = await generateArticles(values);
+      if (result.success && result.results) {
+        setArticles(result.results);
+        toast({
+          title: "Success!",
+          description: `Generated ${result.results.length} articles.`,
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: result.error || "Failed to generate articles.",
+        });
+      }
+    });
+  };
+  
+  const presetLinks = ["183.run", "uu1.run", "uu2.run", "uu3.run", "za51.run", "za52.run", "za53.run"];
+  const presetKeywords = ["黑料不打烊", "今日黑料"];
+
+  const addPresetKeyword = (keyword: string) => {
+    const current = form.getValues("primaryKeywords");
+    const keywords = current ? current.split(/[,\n]/).map(k => k.trim()) : [];
+    if (!keywords.includes(keyword)) {
+      form.setValue("primaryKeywords", current ? `${current}, ${keyword}` : keyword);
+    }
+  };
+
+  const copyToClipboard = (text: string, type: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied!",
+      description: `${type} copied to clipboard.`,
+    });
+  };
+
+  return (
+    <div className="min-h-screen bg-background font-body text-foreground">
+      <main className="container mx-auto px-4 py-8 md:py-16">
+        <header className="text-center mb-12">
+          <h1 className="font-headline text-4xl md:text-6xl font-bold text-primary mb-2">
+            GSite Automator
+          </h1>
+          <p className="text-lg md:text-xl text-muted-foreground">
+            AI-Powered Google Site Article Generator
+          </p>
+        </header>
+
+        <Card className="max-w-3xl mx-auto shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText />
+              Content Generation Engine
+            </CardTitle>
+            <CardDescription>
+              Fill in the details below to generate your articles.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <FormLabel>Preset Primary Keywords</FormLabel>
+                    <KeywordSuggester />
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {presetKeywords.map(kw => (
+                       <Button key={kw} type="button" size="sm" variant="outline" onClick={() => addPresetKeyword(kw)}>
+                        {kw}
+                       </Button>
+                    ))}
+                  </div>
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="primaryKeywords"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Key className="h-4 w-4" /> Primary Keywords
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="e.g., 黑料不打烊, 今日黑料&#10;Separated by commas or new lines."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="secondaryKeywords"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Tags className="h-4 w-4" /> Secondary Keywords
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="e.g., 最新事件, 曝光揭秘, 黑料大全&#10;Separated by commas or new lines."
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <FormField
+                    control={form.control}
+                    name="cy"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <CalendarDays className="h-4 w-4" /> CY Value
+                        </FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g., 2025" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="chosenLink"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <LinkIcon className="h-4 w-4" /> Domain Link
+                        </FormLabel>
+                         <div className="flex flex-wrap gap-2 mb-2">
+                           {presetLinks.map(link => (
+                             <Button key={link} type="button" size="sm" variant="outline" onClick={() => form.setValue("chosenLink", link, { shouldValidate: true })}>
+                              {link}
+                             </Button>
+                           ))}
+                         </div>
+                        <FormControl>
+                          <Input placeholder="e.g., 183.run" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <CardFooter className="px-0 pt-6">
+                  <Button type="submit" disabled={isPending} className="w-full">
+                    {isPending ? (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Sparkles className="mr-2 h-4 w-4" />
+                    )}
+                    Generate Articles
+                  </Button>
+                </CardFooter>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+
+        {articles.length > 0 && (
+          <section className="mt-12">
+            <h2 className="text-center font-headline text-3xl md:text-4xl font-bold text-primary mb-8">
+              Generated Articles
+            </h2>
+            <div className="space-y-8">
+              {articles.map((article, index) => (
+                <Card key={index} className="shadow-lg">
+                  <CardHeader>
+                    <div className="flex justify-between items-start gap-4">
+                      <CardTitle className="flex-1">{index + 1}. {article.title}</CardTitle>
+                      <Button variant="ghost" size="icon" onClick={() => copyToClipboard(article.title, "Title")}>
+                        <ClipboardCopy className="h-5 w-5" />
+                        <span className="sr-only">Copy Title</span>
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                       <Label htmlFor={`content-${index}`}>Article Content</Label>
+                       <Textarea
+                        id={`content-${index}`}
+                        readOnly
+                        value={article.content}
+                        className="h-64 resize-y"
+                       />
+                       <Button variant="outline" size="sm" onClick={() => copyToClipboard(article.content, "Content")}>
+                         <ClipboardCopy className="mr-2 h-4 w-4" />
+                         Copy Content
+                       </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
+      </main>
+    </div>
+  );
 }
