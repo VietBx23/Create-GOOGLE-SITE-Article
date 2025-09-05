@@ -208,32 +208,26 @@ export default function GSiteAutomatorPage() {
     });
   };
   
-  const copyHtmlToClipboard = async (html: string) => {
+  const copyHtmlToClipboard = (html: string) => {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = html;
+    document.body.appendChild(textarea);
+    textarea.select();
     try {
-      const blob = new Blob([html], { type: 'text/html' });
-      const clipboardItem = new ClipboardItem({ 'text/html': blob });
-      await navigator.clipboard.write([clipboardItem]);
+      document.execCommand('copy');
       toast({
           title: "Copied!",
           description: "Content copied to clipboard as HTML.",
       });
     } catch (err) {
       console.error("Failed to copy HTML: ", err);
-      // Fallback to plain text copy
-      try {
-        await navigator.clipboard.writeText(html);
-        toast({
-            title: "Copied as plain text!",
-            description: "Could not copy as HTML, but copied as plain text.",
-        });
-      } catch (err) {
-        toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Failed to copy content.",
-        });
-      }
+      toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to copy content.",
+      });
     }
+    document.body.removeChild(textarea);
   };
 
   const downloadArticle = (article: Article) => {
@@ -305,7 +299,8 @@ export default function GSiteAutomatorPage() {
                       </FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="e.g., 黑料不打烊, 今日黑料&#10;Separated by commas or new lines."
+                          placeholder="e.g., 黑料不打烊, 今日黑料
+Separated by commas or new lines."
                           {...field}
                         />
                       </FormControl>
@@ -323,7 +318,8 @@ export default function GSiteAutomatorPage() {
                       </FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="e.g., 最新事件, 曝光揭秘, 黑料大全&#10;Separated by commas or new lines."
+                          placeholder="e.g., 最新事件, 曝光揭秘, 黑料大全
+Separated by commas or new lines."
                           {...field}
                         />
                       </FormControl>
