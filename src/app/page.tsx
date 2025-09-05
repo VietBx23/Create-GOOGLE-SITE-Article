@@ -207,6 +207,24 @@ export default function GSiteAutomatorPage() {
       description: `${type} copied to clipboard.`,
     });
   };
+  
+  const copyHtmlToClipboard = (html: string) => {
+    const blob = new Blob([html], { type: 'text/html' });
+    const clipboardItem = new ClipboardItem({ 'text/html': blob });
+    navigator.clipboard.write([clipboardItem]).then(() => {
+        toast({
+            title: "Copied!",
+            description: "Content copied to clipboard as HTML.",
+        });
+    }).catch(err => {
+        console.error("Failed to copy HTML: ", err);
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to copy content as HTML.",
+        });
+    });
+  };
 
   const downloadArticle = (article: Article) => {
     const blob = new Blob([article.content], { type: 'text/plain;charset=utf-8' });
@@ -375,7 +393,7 @@ export default function GSiteAutomatorPage() {
                     </div>
                   </CardHeader>
                   <CardContent className="flex flex-col sm:flex-row gap-2">
-                      <Button variant="outline" size="sm" onClick={() => copyToClipboard(article.content, "Content")}>
+                      <Button variant="outline" size="sm" onClick={() => copyHtmlToClipboard(article.content)}>
                          <ClipboardCopy className="mr-2 h-4 w-4" />
                          Copy Content
                       </Button>

@@ -78,7 +78,7 @@ export async function generateArticles(
       const fileSuffix = `${todayStr}-${validatedData.cy}|881比鸭`;
       const randomStr = generateRandomString(6);
 
-      const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - Giá Trị CY ${fileSuffix} ${randomStr}`;
+      const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomStr}`;
       
       let template = getRandomItem(TEMPLATES);
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
