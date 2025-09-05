@@ -388,31 +388,41 @@ export default function GSiteAutomatorPage() {
             <h2 className="text-center font-headline text-3xl md:text-4xl font-bold text-primary mb-8">
               Generated Articles
             </h2>
-            <div className="space-y-8">
+            <div className="space-y-4">
               {articles.map((article, index) => (
                 <Card key={index} className="shadow-lg">
                   <CardHeader>
                     <div className="flex justify-between items-start gap-4">
-                      <CardTitle className="flex-1">{index + 1}. {article.title}</CardTitle>
-                      <Button variant="ghost" size="icon" onClick={() => copyToClipboard(article.title, "Title")}>
+                       <CardTitle className="text-lg flex-1">
+                        {index + 1}. {article.title}
+                       </CardTitle>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => copyToClipboard(article.title, "Title")}
+                      >
                         <ClipboardCopy className="h-5 w-5" />
                         <span className="sr-only">Copy Title</span>
                       </Button>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div
-                      className="prose dark:prose-invert max-w-none whitespace-pre-wrap"
-                      dangerouslySetInnerHTML={{ __html: article.content }}
-                    />
-                    <div className="mt-4 flex flex-col sm:flex-row gap-2">
-                      <Button variant="outline" size="sm" onClick={() => copyHtmlToClipboard(article.content)}>
-                         <ClipboardCopy className="mr-2 h-4 w-4" />
-                         Copy Content
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => copyHtmlToClipboard(article.content)}
+                      >
+                        <ClipboardCopy className="mr-2 h-4 w-4" />
+                        Copy Content
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => downloadArticle(article)}>
-                         <Download className="mr-2 h-4 w-4" />
-                         Download Article
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => downloadArticle(article)}
+                      >
+                        <Download className="mr-2 h-4 w-4" />
+                        Download Article
                       </Button>
                     </div>
                   </CardContent>
@@ -425,3 +435,5 @@ export default function GSiteAutomatorPage() {
     </div>
   );
 }
+
+    

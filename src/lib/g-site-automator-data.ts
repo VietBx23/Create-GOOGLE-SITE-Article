@@ -9,7 +9,7 @@ export const FIXED_URLS: string[] = [
     "在线观看入口", "免费观看入口", "不用付费观看", "无广告在线播放", "高清视频免费看",
 ];
 
-const mainLink = `<br>\n\n<p style="font-size: 2rem; text-align: center;"><a href="{domain}" target="_blank">👉👉立即进入👈👈</a></p>\n\n<br>`;
+const mainLink = `<br>\n\n<p style="font-size: 2.5rem; text-align: center;"><a href="{domain}" target="_blank">👉👉立即进入👈👈</a></p>\n\n<br>`;
 
 export const TEMPLATES: string[] = [
     `{title}
@@ -298,3 +298,5 @@ ${mainLink}
 ✨ 请务必收藏本页面，我们将持续为您更新最新地址，保障您的使用体验。感谢您的支持！
 `,
 ];
+
+    
