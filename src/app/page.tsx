@@ -234,7 +234,7 @@ export default function GSiteAutomatorPage() {
     }
   };
   
-  const copyToClipboardFallback = (textToCopy: string, type: string) => {
+  const copyToClipboardFallback = (textToCopy: string, type: 'Title' | 'Content' | 'HTML') => {
     const textArea = document.createElement("textarea");
     textArea.value = textToCopy;
     textArea.style.position = "fixed";
@@ -264,21 +264,9 @@ export default function GSiteAutomatorPage() {
   const copyTitle = (title: string) => {
     copyToClipboardFallback(title, "Title");
   };
-  
-  const copyHtmlContent = (htmlContent: string) => {
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlContent;
 
-    const linkElement = tempDiv.querySelector('a');
-    if (linkElement) {
-        const linkText = linkElement.textContent || '';
-        const linkHref = linkElement.href;
-        linkElement.parentElement?.replaceWith(document.createTextNode(`${linkText} ${linkHref}`));
-    }
-    
-    tempDiv.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
-    const textContent = (tempDiv.textContent || '').replace(/\n\n/g, '\n');
-    copyToClipboardFallback(textContent.trim(), "Content");
+  const copyHtmlContent = (htmlContent: string) => {
+    copyToClipboardFallback(htmlContent, 'HTML');
   };
 
   const downloadArticleAsTxt = (article: Article) => {
