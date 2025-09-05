@@ -218,10 +218,18 @@ export default function GSiteAutomatorPage() {
         });
     }).catch(err => {
         console.error("Failed to copy HTML: ", err);
-        toast({
-            variant: "destructive",
-            title: "Error",
-            description: "Failed to copy content as HTML.",
+        // Fallback to plain text copy
+        navigator.clipboard.writeText(html).then(() => {
+            toast({
+                title: "Copied as plain text!",
+                description: "Could not copy as HTML, but copied as plain text.",
+            });
+        }).catch(err => {
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to copy content.",
+            });
         });
     });
   };
@@ -392,7 +400,12 @@ export default function GSiteAutomatorPage() {
                       </Button>
                     </div>
                   </CardHeader>
-                  <CardContent className="flex flex-col sm:flex-row gap-2">
+                  <CardContent>
+                    <div
+                      className="prose dark:prose-invert max-w-none whitespace-pre-wrap"
+                      dangerouslySetInnerHTML={{ __html: article.content }}
+                    />
+                    <div className="mt-4 flex flex-col sm:flex-row gap-2">
                       <Button variant="outline" size="sm" onClick={() => copyHtmlToClipboard(article.content)}>
                          <ClipboardCopy className="mr-2 h-4 w-4" />
                          Copy Content
@@ -401,6 +414,7 @@ export default function GSiteAutomatorPage() {
                          <Download className="mr-2 h-4 w-4" />
                          Download Article
                       </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))}

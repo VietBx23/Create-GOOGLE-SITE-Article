@@ -9,10 +9,10 @@ export const FIXED_URLS: string[] = [
     "在线观看入口", "免费观看入口", "不用付费观看", "无广告在线播放", "高清视频免费看",
 ];
 
-const mainLink = `<br>\n\n<p style="font-size: 1.5rem; text-align: center;"><a href="{domain}" target="_blank">👉👉立即进入👈👈</a></p>\n\n<br>`;
+const mainLink = `<br>\n\n<p style="font-size: 2rem; text-align: center;"><a href="{domain}" target="_blank">👉👉立即进入👈👈</a></p>\n\n<br>`;
 
 export const TEMPLATES: string[] = [
-    ` {title}
+    `{title}
 
 🎉 欢迎来到 {app}{url} 官方导航页！
 
@@ -43,7 +43,7 @@ ${mainLink}
 感谢您的信赖，祝您访问顺利，使用愉快！
 `,
 
-    ` {title}
+    `{title}
 
 🔥 {app} - {url} 最新可用地址合集！
 
@@ -74,7 +74,7 @@ ${mainLink}
 感谢您一直以来的支持和理解，愿您有一个愉快的浏览体验！
 `,
 
-    ` {title}
+    `{title}
 
 🚀 {app} 官方跳转入口说明 - {url}
 
@@ -104,7 +104,7 @@ ${mainLink}
 请务必收藏本页面，确保每次访问都能快速找到有效链接。感谢您的支持和信任！
 `,
 
-    ` {title}
+    `{title}
 
 📢 {app}{url} 最新导航页正式上线！
 
@@ -135,7 +135,7 @@ ${mainLink}
 感谢您长期以来的支持与信任，祝您浏览愉快！
 `,
 
-    ` {title}
+    `{title}
 
 🔥 永久收藏指南 - {app}{url} 官方直达！
 
@@ -165,7 +165,7 @@ ${mainLink}
 感谢您的支持，祝您使用愉快！
 `,
 
-    ` {title}
+    `{title}
 
 ✨ {app} - {url} 官方推荐访问通道
 
@@ -192,7 +192,7 @@ ${mainLink}
 始终第一时间为用户更新最新地址，保障访问无忧。感谢您的理解与支持！
 `,
 
-    ` {title}
+    `{title}
 
 🚀 一键直达 - {app}{url} 官方最新通道
 
@@ -219,7 +219,7 @@ ${mainLink}
 收藏本页面，避免因链接变更而无法访问。我们将持续为您提供高效便捷的服务！
 `,
 
-    ` {title}
+    `{title}
 
 🔥 最新导航更新 - {app}{url}
 
@@ -246,7 +246,7 @@ ${mainLink}
 请将本导航收藏，避免因地址更新而错过访问机会。祝您浏览愉快！
 `,
 
-    ` {title}
+    `{title}
 
 📢 官方公告 - {app}{url} 最新直达
 
@@ -272,7 +272,7 @@ ${mainLink}
 ✨ 感谢您对我们的长期支持！我们将继续努力，为用户提供更加稳定与安全的访问体验。
 `,
 
-    ` {title}
+    `{title}
 
 🚀 永久收藏 - {app}{url} 官方导航更新
 
