@@ -24,13 +24,9 @@ const getRandomItem = <T>(arr: T[]): T => {
 }
 
 // Generate a random alphanumeric string
-const generateRandomSuffix = (length: number): string => {
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
+const generateRandomSuffix = (): string => {
+    // Using a timestamp-based suffix to avoid hydration issues with Math.random() on the client.
+    return Date.now().toString(36).slice(-6);
 };
 
 
@@ -80,11 +76,11 @@ export async function generateArticles(
       }
       
       const fileSuffix = `${todayStr}-${validatedData.cy}|881比鸭`;
-      const randomSuffix = generateRandomSuffix(6);
+      const randomSuffix = generateRandomSuffix();
       const domain = `https://${validatedData.chosenLink}/`;
       
       const titleWithLink = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：<a href="${domain}" target="_blank">${validatedData.chosenLink}</a>】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
-      const plainTitle = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKewordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
+      const plainTitle = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
       
       let template = getRandomItem(TEMPLATES);
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
