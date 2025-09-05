@@ -78,7 +78,10 @@ export async function generateArticles(
       
       const domain = `https://${validatedData.chosenLink}/`;
 
-      let content = template
+      const contentBeforeLink = template.substring(0, template.indexOf('{mainLink}'));
+      const contentAfterLink = template.substring(template.indexOf('{mainLink}') + '{mainLink}'.length);
+
+      let processedContent = contentBeforeLink
         .replace(/{title}/g, title)
         .replace(/{app}/g, appFixed)
         .replace(/{url}/g, urlFixed)
@@ -86,10 +89,19 @@ export async function generateArticles(
         .replace(/{date}/g, date)
         .replace(/{domain}/g, domain);
       
-      const parts = content.split('{mainLink}');
-      const processedParts = parts.map(part => part.replace(/\n/g, '<br />'));
+      let processedAfterLink = contentAfterLink
+        .replace(/{title}/g, title)
+        .replace(/{app}/g, appFixed)
+        .replace(/{url}/g, urlFixed)
+        .replace(/{keywords_text}/g, keywordsText)
+        .replace(/{date}/g, date)
+        .replace(/{domain}/g, domain);
+
+      processedContent = processedContent.replace(/\n/g, '<br />');
+      processedAfterLink = processedAfterLink.replace(/\n/g, '<br />');
+      
       const mainLink = `<p style="font-size: 3rem; text-align: left;"><a href="${domain}" target="_blank">👉👉立即进入👈👈</a></p>`;
-      const htmlContent = processedParts.join(mainLink);
+      const htmlContent = processedContent + mainLink + processedAfterLink;
       
       results.push({ title, content: htmlContent });
     }

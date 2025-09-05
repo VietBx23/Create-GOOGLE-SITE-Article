@@ -70,7 +70,6 @@ const generateRandomString = (length: number): string => {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
-    // This is safe because it's only called on the client.
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return result;
@@ -170,7 +169,12 @@ const KeywordSuggester = () => {
 export default function GSiteAutomatorPage() {
   const [isPending, startTransition] = useTransition();
   const [articles, setArticles] = React.useState<Article[]>([]);
+  const [isMounted, setIsMounted] = React.useState(false);
   const { toast } = useToast();
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -221,6 +225,9 @@ export default function GSiteAutomatorPage() {
   const copyToClipboard = (text: string, type: string) => {
     const textArea = document.createElement("textarea");
     textArea.value = text;
+    // Make the textarea invisible
+    textArea.style.position = 'absolute';
+    textArea.style.left = '-9999px';
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
@@ -245,9 +252,10 @@ export default function GSiteAutomatorPage() {
     // Create a temporary element to parse the HTML
     const tempEl = document.createElement('div');
     tempEl.innerHTML = html;
-    
-    // Replace <br> with newlines for plain text representation
-    tempEl.querySelectorAll('br, br/, <br />, p').forEach(br => br.replaceWith('\n'));
+
+    // Replace <br> and <p> with newlines for plain text representation
+    tempEl.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
+    tempEl.querySelectorAll('p').forEach(p => p.replaceWith(p.textContent + '\n'));
     
     const text = tempEl.textContent || '';
     copyToClipboard(text.trim(), "Content");
@@ -264,6 +272,10 @@ export default function GSiteAutomatorPage() {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
+
+  if (!isMounted) {
+    return null; // or a loading spinner
+  }
 
   return (
     <div className="min-h-screen bg-background font-body text-foreground">
