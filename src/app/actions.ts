@@ -81,19 +81,19 @@ export async function generateArticles(
       
       const fileSuffix = `${todayStr}-${validatedData.cy}|881比鸭`;
       const randomSuffix = generateRandomSuffix(6);
+      const domain = `https://${validatedData.chosenLink}/`;
       
-      const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
+      const titleWithLink = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：<a href="${domain}" target="_blank">${validatedData.chosenLink}</a>】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
+      const plainTitle = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKewordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
       
       let template = getRandomItem(TEMPLATES);
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
       const date = format(today, 'yyyy-MM-dd');
-      
-      const domain = `https://${validatedData.chosenLink}/`;
 
-      const mainLink = `<p style="font-size: 3rem; text-align: left;"><a href="${domain}" target="_blank">👉👉立即进入👈👈</a></p>`;
+      const mainLink = `<p style="font-size: 4rem; text-align: left;"><a href="${domain}" target="_blank">👉👉立即进入👈👈</a></p>`;
       
       let content = template
-        .replace(/{title}/g, title)
+        .replace(/{title}/g, titleWithLink)
         .replace(/{app}/g, appFixed)
         .replace(/{url}/g, urlFixed)
         .replace(/{keywords_text}/g, keywordsText)
@@ -103,7 +103,7 @@ export async function generateArticles(
       
       const htmlContent = content.replace(/\n/g, '<br />');
       
-      results.push({ title, content: htmlContent });
+      results.push({ title: plainTitle, content: htmlContent });
     }
 
     return { success: true, results };
