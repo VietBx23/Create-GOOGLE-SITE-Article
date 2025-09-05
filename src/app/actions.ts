@@ -94,7 +94,12 @@ export async function generateArticles(
         .replace(/{date}/g, date)
         .replace(/{domain}/g, domain);
       
-      const htmlContent = content.replace(/\n/g, '<br />');
+      // Split the content by the link placeholder and process newlines separately
+      const parts = content.split('{mainLink}');
+      const processedParts = parts.map(part => part.replace(/\n/g, '<br />'));
+      const mainLink = `<p style="font-size: 3rem; text-align: left;"><a href="${domain}" target="_blank">👉👉立即进入👈👈</a></p>`;
+      const htmlContent = processedParts.join(mainLink);
+
       
       results.push({ title, content: htmlContent });
     }

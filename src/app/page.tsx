@@ -190,7 +190,7 @@ export default function GSiteAutomatorPage() {
   };
   
   const presetLinks = ["183.run", "uu1.run", "uu2.run", "uu3.run", "za51.run", "za52.run", "za53.run"];
-  const presetKeywords = ["黑料不打烊", "今日黑料"];
+  const presetKeywords = ["黑料网"];
 
   const addPresetKeyword = (keyword: string) => {
     const current = form.getValues("primaryKeywords");

@@ -9,8 +9,6 @@ export const FIXED_URLS: string[] = [
     "在线观看入口", "免费观看入口", "不用付费观看", "无广告在线播放", "高清视频免费看",
 ];
 
-const mainLink = `<p style="font-size: 3rem; text-align: left;"><a href="{domain}" target="_blank">👉👉立即进入👈👈</a></p>`;
-
 export const TEMPLATES: string[] = [
     `{title}
 
@@ -22,9 +20,7 @@ export const TEMPLATES: string[] = [
 更新时间：{date}
 
 以下是您当前可用的访问入口，强烈建议收藏多个备用链接，以防主链路出现故障：
-
-${mainLink}
-
+{mainLink}
 📌 我们的优势：
 - 实时监测所有链接状态，确保每条链接均可正常访问，杜绝失效情况。
 - 支持各种设备，包括手机、平板和电脑，跨平台无缝体验。
@@ -53,9 +49,7 @@ ${mainLink}
 页面更新日期：{date}
 
 🔗 当前可访问地址：
-
-${mainLink}
-
+{mainLink}
 为什么选择我们？
 - 多线路保障，确保任一线路出现故障时能迅速切换，不影响您的观看体验。
 - 采用先进的服务器集群技术，极大提升访问速度和稳定性。
@@ -85,9 +79,7 @@ ${mainLink}
 日期：{date}
 
 🌍 可用地址一览：
-
-${mainLink}
-
+{mainLink}
 📢 访问建议：
 - 移动设备推荐使用 Chrome 或 Safari 浏览器，获得最佳兼容性和体验。
 - 如果您在 WiFi 网络下遇到访问障碍，建议切换到 4G/5G 移动网络或使用 VPN。
@@ -116,9 +108,7 @@ ${mainLink}
 页面更新：{date}
 
 🔗 当前可用地址：
-
-${mainLink}
-
+{mainLink}
 📌 平台优势：
 - 稳定线路支持，快速直达。
 - 覆盖全终端，兼容主流浏览器。
@@ -148,9 +138,7 @@ ${mainLink}
 更新日期：{date}
 
 🌍 最新入口：
-
-${mainLink}
-
+{mainLink}
 📌 我们的服务优势：
 - 专业团队实时检测，确保入口可用。
 - 全平台适配，畅享无缝体验。
@@ -179,9 +167,7 @@ ${mainLink}
 更新时间：{date}
 
 🔗 可用链接入口：
-
-${mainLink}
-
+{mainLink}
 📌 我们的特色：
 - 提供多线路，随时切换。
 - 支持各类终端，操作简单。
@@ -207,9 +193,7 @@ ${mainLink}
 页面更新：{date}
 
 🔗 当前推荐访问入口：
-
-${mainLink}
-
+{mainLink}
 📌 优势说明：
 - 稳定高速线路，访问不卡顿。
 - 全面适配移动端与 PC。
@@ -235,9 +219,7 @@ ${mainLink}
 更新日期：{date}
 
 🔗 当前有效链接：
-
-${mainLink}
-
+{mainLink}
 📌 平台优势：
 - 高速稳定，保障访问体验。
 - 支持全平台访问，无兼容问题。
@@ -263,9 +245,7 @@ ${mainLink}
 更新时间：{date}
 
 🔗 最新推荐链接：
-
-${mainLink}
-
+{mainLink}
 📌 我们的优势：
 - 稳定高速线路支持，访问更顺畅。
 - 多平台兼容，随时随地轻松进入。
@@ -290,9 +270,7 @@ ${mainLink}
 页面更新日期：{date}
 
 🔗 当前有效访问入口：
-
-${mainLink}
-
+{mainLink}
 📌 我们承诺：
 - 所有入口均经过严格检测，保证安全稳定。
 - 实时更新，避免访问中断。
