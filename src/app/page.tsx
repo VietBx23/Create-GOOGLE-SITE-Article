@@ -49,6 +49,7 @@ import {
   Loader2,
   Copy,
   Beaker,
+  Download,
 } from "lucide-react";
 
 const formSchema = z.object({
@@ -207,6 +208,18 @@ export default function GSiteAutomatorPage() {
     });
   };
 
+  const downloadArticle = (article: Article) => {
+    const blob = new Blob([article.content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${article.title}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="min-h-screen bg-background font-body text-foreground">
       <main className="container mx-auto px-4 py-8 md:py-16">
@@ -361,20 +374,15 @@ export default function GSiteAutomatorPage() {
                       </Button>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                       <Label htmlFor={`content-${index}`}>Article Content</Label>
-                       <Textarea
-                        id={`content-${index}`}
-                        readOnly
-                        value={article.content}
-                        className="h-64 resize-y"
-                       />
-                       <Button variant="outline" size="sm" onClick={() => copyToClipboard(article.content, "Content")}>
+                  <CardContent className="flex flex-col sm:flex-row gap-2">
+                      <Button variant="outline" size="sm" onClick={() => copyToClipboard(article.content, "Content")}>
                          <ClipboardCopy className="mr-2 h-4 w-4" />
                          Copy Content
-                       </Button>
-                    </div>
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => downloadArticle(article)}>
+                         <Download className="mr-2 h-4 w-4" />
+                         Download Article
+                      </Button>
                   </CardContent>
                 </Card>
               ))}

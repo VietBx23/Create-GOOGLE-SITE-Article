@@ -9,6 +9,8 @@ export const FIXED_URLS: string[] = [
     "在线观看入口", "免费观看入口", "不用付费观看", "无广告在线播放", "高清视频免费看",
 ];
 
+const mainLink = `<br>\n\n<p style="font-size: 1.5rem; text-align: center;"><a href="{domain}" target="_blank">👉👉立即进入👈👈</a></p>\n\n<br>`;
+
 export const TEMPLATES: string[] = [
     ` {title}
 
@@ -21,7 +23,7 @@ export const TEMPLATES: string[] = [
 
 以下是您当前可用的访问入口，强烈建议收藏多个备用链接，以防主链路出现故障：
 
-- [👉👉主站入口👈👈]({domain})  
+${mainLink}
 
 📌 我们的优势：  
 - 实时监测所有链接状态，确保每条链接均可正常访问，杜绝失效情况。  
@@ -51,7 +53,7 @@ export const TEMPLATES: string[] = [
 页面更新日期：{date}  
 
 🔗 当前可访问地址：  
-- [👉👉主入口👈👈]({domain})  
+${mainLink}
 
 为什么选择我们？  
 - 多线路保障，确保任一线路出现故障时能迅速切换，不影响您的观看体验。  
@@ -82,7 +84,7 @@ export const TEMPLATES: string[] = [
 日期：{date}  
 
 🌍 可用地址一览：  
-- [👉👉主站点👈👈]({domain})  
+${mainLink}
 
 📢 访问建议：  
 - 移动设备推荐使用 Chrome 或 Safari 浏览器，获得最佳兼容性和体验。  
@@ -112,7 +114,7 @@ export const TEMPLATES: string[] = [
 页面更新：{date}  
 
 🔗 当前可用地址：  
-- [👉👉点击进入主站👈👈]({domain})  
+${mainLink}
 
 📌 平台优势：  
 - 稳定线路支持，快速直达。  
@@ -143,7 +145,7 @@ export const TEMPLATES: string[] = [
 更新日期：{date}  
 
 🌍 最新入口：  
-- [👉👉立即进入👈👈]({domain})  
+${mainLink}
 
 📌 我们的服务优势：  
 - 专业团队实时检测，确保入口可用。  
@@ -173,7 +175,7 @@ export const TEMPLATES: string[] = [
 更新时间：{date}  
 
 🔗 可用链接入口：  
-- [👉👉主入口地址👈👈]({domain})  
+${mainLink}
 
 📌 我们的特色：  
 - 提供多线路，随时切换。  
@@ -200,7 +202,7 @@ export const TEMPLATES: string[] = [
 页面更新：{date}  
 
 🔗 当前推荐访问入口：  
-- [👉👉立即访问👈👈]({domain})  
+${mainLink}
 
 📌 优势说明：  
 - 稳定高速线路，访问不卡顿。  
@@ -227,7 +229,7 @@ export const TEMPLATES: string[] = [
 更新日期：{date}  
 
 🔗 当前有效链接：  
-- [👉👉官方入口👈👈]({domain})  
+${mainLink}
 
 📌 平台优势：  
 - 高速稳定，保障访问体验。  
@@ -254,7 +256,7 @@ export const TEMPLATES: string[] = [
 更新时间：{date}  
 
 🔗 最新推荐链接：  
-- [👉👉点此进入👈👈]({domain})  
+${mainLink}
 
 📌 我们的优势：  
 - 稳定高速线路支持，访问更顺畅。  
@@ -280,7 +282,7 @@ export const TEMPLATES: string[] = [
 页面更新日期：{date}  
 
 🔗 当前有效访问入口：  
-- [👉👉立即进入👈👈]({domain})  
+${mainLink}
 
 📌 我们承诺：  
 - 所有入口均经过严格检测，保证安全稳定。  

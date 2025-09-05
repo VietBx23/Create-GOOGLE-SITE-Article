@@ -83,6 +83,8 @@ export async function generateArticles(
       let template = getRandomItem(TEMPLATES);
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
       const date = format(today, 'yyyy-MM-dd');
+      
+      const domain = `https://${validatedData.chosenLink}/`;
 
       let content = template
         .replace(/{title}/g, title)
@@ -90,14 +92,8 @@ export async function generateArticles(
         .replace(/{url}/g, urlFixed)
         .replace(/{keywords_text}/g, keywordsText)
         .replace(/{date}/g, date)
-        .replace(/{domain}/g, `https://${validatedData.chosenLink}/`);
-
-      // Replace any markdown link in a list item with the specific one
-      content = content.replace(
-        /-\s\[.*?\]\(.*?\)/g,
-        `- [👉👉立即进入👈👈](https://${validatedData.chosenLink}/)`
-      );
-
+        .replace(/{domain}/g, domain);
+      
       results.push({ title, content });
     }
 
