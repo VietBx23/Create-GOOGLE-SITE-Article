@@ -75,7 +75,7 @@ export async function generateArticles(
         uniqueKeywordList.push('');
       }
 
-      const fileSuffix = `${todayStr}-${validatedData.cy}|881比鸭`;
+      const fileSuffix = `${todayStr}-cy|881比鸭`;
       const randomStr = generateRandomString(6);
 
       const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomStr}`;
@@ -94,7 +94,9 @@ export async function generateArticles(
         .replace(/{date}/g, date)
         .replace(/{domain}/g, domain);
       
-      results.push({ title, content });
+      const htmlContent = content.replace(/\n/g, '<br />');
+      
+      results.push({ title, content: htmlContent });
     }
 
     return { success: true, results };
