@@ -186,6 +186,7 @@ export default function GSiteAutomatorPage() {
       setArticles([]);
       const result = await generateArticles(values);
       if (result.success && result.results) {
+        // Random string is now generated client-side
         const articlesWithRandomSuffix = result.results.map(article => ({
             ...article,
             title: `${article.title} ${generateRandomString(6)}`
@@ -217,10 +218,18 @@ export default function GSiteAutomatorPage() {
   };
 
   const copyToClipboard = (text: string, type: string) => {
-    navigator.clipboard.writeText(text);
-    toast({
-      title: "Copied!",
-      description: `${type} copied to clipboard.`,
+    navigator.clipboard.writeText(text).then(() => {
+      toast({
+        title: "Copied!",
+        description: `${type} copied to clipboard.`,
+      });
+    }).catch(err => {
+        console.error(`Failed to copy ${type}:`, err);
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: `Failed to copy ${type}.`,
+        });
     });
   };
   
@@ -228,15 +237,25 @@ export default function GSiteAutomatorPage() {
     try {
       const tempEl = document.createElement('div');
       tempEl.innerHTML = html;
-      tempEl.querySelectorAll('br').forEach(br => br.replaceWith('\\n'));
+      // Replace <br> with newlines for plain text representation
+      tempEl.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
       const text = tempEl.textContent || '';
-      navigator.clipboard.writeText(text.trim());
-      toast({
-          title: "Copied!",
-          description: "Content copied to clipboard as plain text.",
+      
+      navigator.clipboard.writeText(text.trim()).then(() => {
+          toast({
+              title: "Copied!",
+              description: "Content copied to clipboard as plain text.",
+          });
+      }).catch(err => {
+          console.error("Failed to copy content: ", err);
+          toast({
+              variant: "destructive",
+              title: "Error",
+              description: "Could not copy content to clipboard.",
+          });
       });
     } catch (err) {
-      console.error("Failed to copy content: ", err);
+      console.error("Failed to parse or copy content: ", err);
       toast({
           variant: "destructive",
           title: "Error",
@@ -246,11 +265,11 @@ export default function GSiteAutomatorPage() {
   };
 
   const downloadArticle = (article: Article) => {
-    const blob = new Blob([article.content], { type: 'text/plain;charset=utf-8' });
+    const blob = new Blob([article.content], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${article.title}.txt`;
+    link.download = `${article.title}.html`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

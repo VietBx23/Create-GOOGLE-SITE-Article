@@ -68,7 +68,7 @@ export async function generateArticles(
         uniqueKeywordList.push('');
       }
 
-      const fileSuffix = `${todayStr}-cy|881比鸭`;
+      const fileSuffix = `${todayStr}-${validatedData.cy}|881比鸭`;
       
       const title = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix}`;
       
@@ -119,5 +119,7 @@ export async function suggestArticleKeywords(
     return { success: false, error: 'Failed to communicate with AI model.' };
   }
 }
+
+    
 
     
