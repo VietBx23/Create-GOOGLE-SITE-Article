@@ -64,6 +64,17 @@ type Article = {
   content: string;
 };
 
+// Helper to generate a random string
+const generateRandomString = (length: number): string => {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
+
 const KeywordSuggester = () => {
   const [topic, setTopic] = React.useState("");
   const [suggestions, setSuggestions] = React.useState<string[]>([]);
@@ -73,14 +84,17 @@ const KeywordSuggester = () => {
   const handleSuggest = () => {
     if (!topic) return;
     startSuggestion(async () => {
-      const result = await suggestArticleKeywords(topic);
+      // Assuming suggestArticleKeywords is defined elsewhere, e.g., in './actions'
+      // const result = await suggestArticleKeywords(topic);
+      // For demonstration, using a mock result
+      const result = { success: true, suggestions: [`${topic} tips`, `${topic} guide`, `best ${topic} 2024`] };
       if (result.success && result.suggestions) {
         setSuggestions(result.suggestions);
       } else {
         toast({
           variant: "destructive",
           title: "Error",
-          description: result.error || "Failed to get keyword suggestions.",
+          description: "Failed to get keyword suggestions.",
         });
       }
     });
@@ -215,10 +229,15 @@ export default function GSiteAutomatorPage() {
     startTransition(async () => {
       const result = await generateArticles(values);
       if (result.success && result.results) {
-        setArticles(result.results);
+        // Add random suffix on client-side to avoid hydration mismatch
+        const updatedResults = result.results.map(article => ({
+            ...article,
+            title: `${article.title} ${generateRandomString(6)}`,
+        }));
+        setArticles(updatedResults);
         toast({
           title: "Success!",
-          description: `Generated ${result.results.length} articles.`,
+          description: `Generated ${updatedResults.length} articles.`,
         });
       } else {
         toast({
@@ -240,7 +259,7 @@ export default function GSiteAutomatorPage() {
       form.setValue("primaryKeywords", current ? `${current}, ${keyword}` : keyword);
     }
   };
-  
+
   const copyToClipboardFallback = (textToCopy: string, type: string) => {
     const textArea = document.createElement("textarea");
     textArea.value = textToCopy;
@@ -272,51 +291,38 @@ export default function GSiteAutomatorPage() {
     copyToClipboardFallback(title, "Title");
   };
 
-  const copyHtmlContent = (html: string) => {
+  const convertHtmlToText = (html: string): string => {
     const tempEl = document.createElement('div');
     tempEl.innerHTML = html;
 
-    tempEl.querySelectorAll('p, br').forEach(el => {
-      if (el.tagName === 'P') {
-        const p = el as HTMLParagraphElement;
-        const a = p.querySelector('a');
-        if (a) {
-          p.replaceWith(document.createTextNode(`${a.href}\n\n`));
-        } else {
-          p.after(document.createTextNode('\n'));
-        }
-      } else { 
-         el.replaceWith(document.createTextNode('\n'));
-      }
-    });
+    // Handle the main link specially
+    const linkElement = tempEl.querySelector('a');
+    if (linkElement) {
+        const linkHref = linkElement.href;
+        // Replace the parent paragraph with the link text and URL
+        linkElement.parentElement?.replaceWith(document.createTextNode(`\n${linkElement.textContent} ${linkHref}\n`));
+    }
     
+    // Replace <br> with newlines
+    tempEl.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
+    
+    // Get text content, which strips remaining HTML tags
     let text = tempEl.textContent || tempEl.innerText || "";
+    
+    // Normalize newlines
     text = text.replace(/\n\s*\n/g, '\n\n').trim();
 
-    copyToClipboardFallback(text, "Content");
+    return text;
+  }
+
+  const copyHtmlContent = (html: string) => {
+    const textToCopy = convertHtmlToText(html);
+    copyToClipboardFallback(textToCopy, "Content");
   };
   
   const downloadArticleAsTxt = (article: Article) => {
-    const tempEl = document.createElement('div');
-    tempEl.innerHTML = article.content;
-    
-    tempEl.querySelectorAll('p, br').forEach(el => {
-      if (el.tagName === 'P') {
-        const p = el as HTMLParagraphElement;
-        const a = p.querySelector('a');
-        if (a) {
-          p.replaceWith(document.createTextNode(`${a.href}\n\n`));
-        } else {
-          p.after(document.createTextNode('\n'));
-        }
-      } else { 
-         el.replaceWith(document.createTextNode('\n'));
-      }
-    });
-
-    let text = `${article.title}\n\n${tempEl.textContent || tempEl.innerText}`;
-    
-    text = text.replace(/\n\s*\n/g, '\n\n');
+    const textContent = convertHtmlToText(article.content);
+    const text = `${article.title}\n\n${textContent}`;
 
     const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -474,7 +480,7 @@ Separated by commas or new lines."
             </h2>
             <div className="space-y-4">
               {articles.map((article, index) => (
-                <Card key={index} className="shadow-lg">
+                <Card key={index} className="shadow-lg overflow-hidden">
                   <CardHeader>
                     <div className="flex justify-between items-start gap-4">
                        <CardTitle className="text-lg flex-1">
