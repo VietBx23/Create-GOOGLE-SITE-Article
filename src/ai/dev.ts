@@ -4,3 +4,4 @@ config();
 import '@/ai/flows/improve-article-seo.ts';
 import '@/ai/flows/keyword-suggestions.ts';
 import '@/ai/flows/generate-article-titles.ts';
+import '@/ai/flows/generate-content.ts';

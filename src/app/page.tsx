@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { generateArticles, suggestArticleKeywords } from "./actions";
 import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -47,6 +48,7 @@ import {
   ClipboardCopy,
   Loader2,
   Copy,
+  Beaker,
 } from "lucide-react";
 
 const formSchema = z.object({
@@ -209,9 +211,17 @@ export default function GSiteAutomatorPage() {
     <div className="min-h-screen bg-background font-body text-foreground">
       <main className="container mx-auto px-4 py-8 md:py-16">
         <header className="text-center mb-12">
-          <h1 className="font-headline text-4xl md:text-6xl font-bold text-primary mb-2">
-            GSite Automator
-          </h1>
+          <div className="flex justify-center items-center gap-4 mb-4">
+            <h1 className="font-headline text-4xl md:text-6xl font-bold text-primary">
+              GSite Automator
+            </h1>
+            <Link href="/playground" passHref>
+              <Button variant="outline">
+                <Beaker className="mr-2" />
+                Playground
+              </Button>
+            </Link>
+          </div>
           <p className="text-lg md:text-xl text-muted-foreground">
             AI-Powered Google Site Article Generator
           </p>
