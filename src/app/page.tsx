@@ -277,58 +277,29 @@ export default function GSiteAutomatorPage() {
     }
   };
 
-  const convertHtmlToPlainText = (html: string): string => {
-    if (typeof window === 'undefined') {
-        // Fallback for server-side rendering or environments without DOM
-        return html.replace(/<[^>]*>/g, '');
-    }
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = html;
-    // Handle the main link specifically
-    const linkElement = tempDiv.querySelector('a');
-    if (linkElement) {
-        const linkText = linkElement.textContent || '';
-        const linkHref = linkElement.href;
-        // Replace the parent paragraph with the desired text format
-        linkElement.parentElement?.replaceWith(document.createTextNode(`\n${linkText} ( ${linkHref} )\n`));
-    }
-    // Replace <br> with newlines
-    tempDiv.querySelectorAll('br').forEach(br => br.replaceWith(document.createTextNode('\n')));
-    
-    // Get text content, which now includes the formatted link
-    return tempDiv.textContent || '';
-  }
-
   const copyHtmlContent = (htmlContent: string) => {
-    try {
-      const plainText = convertHtmlToPlainText(htmlContent);
-      const htmlBlob = new Blob([htmlContent], { type: 'text/html' });
-      const textBlob = new Blob([plainText], { type: 'text/plain' });
+    const listener = (e: ClipboardEvent) => {
+        e.preventDefault();
+        if (e.clipboardData) {
+            e.clipboardData.setData('text/html', htmlContent);
+            e.clipboardData.setData('text/plain', htmlContent);
+             toast({
+                title: "Copied!",
+                description: "Content copied to clipboard.",
+            });
+        }
+    };
 
-      const clipboardItem = new ClipboardItem({
-        'text/html': htmlBlob,
-        'text/plain': textBlob,
-      });
-
-      navigator.clipboard.write([clipboardItem]).then(() => {
-        toast({
-            title: "Copied!",
-            description: "Content copied to clipboard.",
-        });
-      }, (err) => {
-        console.error("Failed to copy content: ", err);
-        // Fallback to plain text copy if HTML copy fails
-        copyToClipboardFallback(plainText, "Content");
-      });
-    } catch (e) {
-      console.error("Error creating ClipboardItem, falling back to plain text copy.", e);
-      const plainText = convertHtmlToPlainText(htmlContent);
-      copyToClipboardFallback(plainText, "Content");
-    }
+    document.addEventListener('copy', listener);
+    document.execCommand('copy');
+    document.removeEventListener('copy', listener);
   };
-
+  
   const downloadArticleAsTxt = (article: Article) => {
-    const plainText = convertHtmlToPlainText(article.content);
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = article.content;
+    const plainText = tempDiv.textContent || tempDiv.innerText || '';
+    
     const textToDownload = `${article.title}\n\n${plainText.trim()}`;
     const blob = new Blob([textToDownload], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
