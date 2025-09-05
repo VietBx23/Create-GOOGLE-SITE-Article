@@ -188,7 +188,6 @@ export default function GSiteAutomatorPage() {
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     startTransition(async () => {
-      setArticles([]);
       const result = await generateArticles(values);
       if (result.success && result.results) {
         // Add random suffix on the client-side to prevent hydration issues
@@ -225,7 +224,6 @@ export default function GSiteAutomatorPage() {
   const copyToClipboard = (text: string, type: string) => {
     const textArea = document.createElement("textarea");
     textArea.value = text;
-    // Make the textarea invisible
     textArea.style.position = 'absolute';
     textArea.style.left = '-9999px';
     document.body.appendChild(textArea);
@@ -249,24 +247,26 @@ export default function GSiteAutomatorPage() {
   };
   
   const copyHtmlAsTextToClipboard = (html: string) => {
-    // Create a temporary element to parse the HTML
     const tempEl = document.createElement('div');
     tempEl.innerHTML = html;
 
-    // Replace <br> and <p> with newlines for plain text representation
     tempEl.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
     tempEl.querySelectorAll('p').forEach(p => p.replaceWith(p.textContent + '\n'));
     
     const text = tempEl.textContent || '';
     copyToClipboard(text.trim(), "Content");
   };
+  
+  const downloadArticleAsTxt = (article: Article) => {
+    const tempEl = document.createElement('div');
+    tempEl.innerHTML = article.content;
+    const text = tempEl.innerText || '';
 
-  const downloadArticle = (article: Article) => {
-    const blob = new Blob([article.content], { type: 'text/html;charset=utf-8' });
+    const blob = new Blob([article.title + '\n\n' + text], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${article.title}.html`;
+    link.download = `${article.title}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -452,7 +452,7 @@ Separated by commas or new lines."
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => downloadArticle(article)}
+                        onClick={() => downloadArticleAsTxt(article)}
                       >
                         <Download className="mr-2 h-4 w-4" />
                         Download Article
