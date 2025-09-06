@@ -282,100 +282,102 @@ export default function GSiteAutomatorPage() {
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <CardContent className="p-8">
-                  <div className="space-y-6">
-                     <FormField
-                        control={form.control}
-                        name="primaryKeywords"
-                        render={({ field }) => (
-                          <FormItem>
-                            <div className="flex items-center justify-between mb-1">
-                              <FormLabel className="flex items-center gap-2 font-semibold">
-                                <Key className="h-5 w-5 text-primary" /> Primary Keywords
-                              </FormLabel>
-                              <KeywordSuggester />
-                            </div>
-                            <FormDescription>Keywords that will be reused across multiple articles.</FormDescription>
-                            <FormControl>
-                              <Textarea
-                                placeholder="e.g., keyword one, keyword two"
-                                {...field}
-                                className="min-h-[100px]"
-                              />
-                            </FormControl>
-                             <div className="flex flex-wrap gap-2 pt-2">
-                                <span className="text-sm text-muted-foreground mr-2">Presets:</span>
-                                {presetKeywords.map(kw => (
-                                <Button key={kw} type="button" size="sm" variant="outline" className="rounded-full transition-all duration-200 hover:bg-accent hover:scale-105" onClick={() => addPresetKeyword(kw)}>
-                                    {kw}
-                                </Button>
-                                ))}
-                            </div>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="secondaryKeywords"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="flex items-center gap-2 font-semibold">
-                              <Tags className="h-5 w-5 text-primary" /> Secondary Keywords
-                            </FormLabel>
-                            <FormDescription>Each keyword will be used to generate a unique article.</FormDescription>
-                            <FormControl>
-                              <Textarea
-                                placeholder="e.g., keyword three, keyword four"
-                                {...field}
-                                className="min-h-[120px]"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                      <FormField
-                        control={form.control}
-                        name="chosenLink"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="flex items-center gap-2 font-semibold">
-                              <LinkIcon className="h-5 w-5 text-primary" /> Domain Link
-                            </FormLabel>
-                             <FormDescription>The domain to link to in the articles.</FormDescription>
-                            <FormControl>
-                              <Input placeholder="e.g., example.com" {...field} className="h-11" />
-                            </FormControl>
-                             <div className="flex flex-wrap gap-2 pt-2">
-                                <span className="text-sm text-muted-foreground mr-2">Presets:</span>
-                                {presetLinks.map(link => (
-                                <Button key={link} type="button" size="sm" variant="outline" className="rounded-full transition-all duration-200 hover:bg-accent hover:scale-105" onClick={() => form.setValue("chosenLink", link, { shouldValidate: true })}>
-                                    {link}
-                                </Button>
-                                ))}
-                            </div>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="cy"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="flex items-center gap-2 font-semibold">
-                              <CalendarDays className="h-5 w-5 text-primary" /> CY Value
-                            </FormLabel>
-                             <FormDescription>A custom value to include in titles.</FormDescription>
-                            <FormControl>
-                              <Input placeholder="e.g., 2025" {...field} className="h-11" />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                      <div className="space-y-6">
+                        <FormField
+                            control={form.control}
+                            name="primaryKeywords"
+                            render={({ field }) => (
+                              <FormItem>
+                                <div className="flex items-center justify-between mb-1">
+                                  <FormLabel className="flex items-center gap-2 font-semibold">
+                                    <Key className="h-5 w-5 text-primary" /> Primary Keywords
+                                  </FormLabel>
+                                  <KeywordSuggester />
+                                </div>
+                                <FormDescription>Keywords that will be reused across multiple articles.</FormDescription>
+                                <FormControl>
+                                  <Textarea
+                                    placeholder="e.g., keyword one, keyword two"
+                                    {...field}
+                                    className="min-h-[100px]"
+                                  />
+                                </FormControl>
+                                 <div className="flex flex-wrap gap-2 pt-2">
+                                    <span className="text-sm text-muted-foreground mr-2">Presets:</span>
+                                    {presetKeywords.map(kw => (
+                                    <Button key={kw} type="button" size="sm" variant="outline" className="rounded-full transition-all duration-200 hover:bg-accent hover:scale-105" onClick={() => addPresetKeyword(kw)}>
+                                        {kw}
+                                    </Button>
+                                    ))}
+                                </div>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="secondaryKeywords"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="flex items-center gap-2 font-semibold">
+                                  <Tags className="h-5 w-5 text-primary" /> Secondary Keywords
+                                </FormLabel>
+                                <FormDescription>Each keyword will be used to generate a unique article.</FormDescription>
+                                <FormControl>
+                                  <Textarea
+                                    placeholder="e.g., keyword three, keyword four"
+                                    {...field}
+                                    className="min-h-[120px]"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                      </div>
+                      <div className="space-y-6">
+                           <FormField
+                            control={form.control}
+                            name="chosenLink"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="flex items-center gap-2 font-semibold">
+                                  <LinkIcon className="h-5 w-5 text-primary" /> Domain Link
+                                </FormLabel>
+                                 <FormDescription>The domain to link to in the articles.</FormDescription>
+                                <FormControl>
+                                  <Input placeholder="e.g., example.com" {...field} className="h-11" />
+                                </FormControl>
+                                 <div className="flex flex-wrap gap-2 pt-2">
+                                    <span className="text-sm text-muted-foreground mr-2">Presets:</span>
+                                    {presetLinks.map(link => (
+                                    <Button key={link} type="button" size="sm" variant="outline" className="rounded-full transition-all duration-200 hover:bg-accent hover:scale-105" onClick={() => form.setValue("chosenLink", link, { shouldValidate: true })}>
+                                        {link}
+                                    </Button>
+                                    ))}
+                                </div>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name="cy"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="flex items-center gap-2 font-semibold">
+                                  <CalendarDays className="h-5 w-5 text-primary" /> CY Value
+                                </FormLabel>
+                                 <FormDescription>A custom value to include in titles.</FormDescription>
+                                <FormControl>
+                                  <Input placeholder="e.g., 2025" {...field} className="h-11" />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                      </div>
                   </div>
                 </CardContent>
                 <CardFooter className="p-6 bg-muted/30 rounded-b-2xl mt-8">
