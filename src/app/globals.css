@@ -4,30 +4,25 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
     --primary: 24 95% 53%; /* Orange */
     --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 220 13% 91%;
-    --secondary-foreground: 220 14.3% 34.3%;
-    --muted: 220 13% 91%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --accent: 24 95% 90%; /* Light Orange */
-    --accent-foreground: 24 95% 15%;
-    --destructive: 0 84.2% 60.2%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
     --ring: 24 95% 53%; /* Orange */
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
     --radius: 0.8rem;
   }
 
@@ -63,33 +58,64 @@
   }
 }
 
+@keyframes aurora-fg {
+  0% { transform: translate(var(--x-fg-0), var(--y-fg-0)) }
+  25% { transform: translate(var(--x-fg-1), var(--y-fg-1)) }
+  50% { transform: translate(var(--x-fg-2), var(--y-fg-2)) }
+  75% { transform: translate(var(--x-fg-3), var(--y-fg-3)) }
+  100% { transform: translate(var(--x-fg-0), var(--y-fg-0)) }
+}
+
+@keyframes aurora-bg {
+  0% { transform: translate(var(--x-bg-0), var(--y-bg-0)) }
+  25% { transform: translate(var(--x-bg-1), var(--y-bg-1)) }
+  50% { transform: translate(var(--x-bg-2), var(--y-bg-2)) }
+  75% { transform: translate(var(--x-bg-3), var(--y-bg-3)) }
+  100% { transform: translate(var(--x-bg-0), var(--y-bg-0)) }
+}
+
+
 .aurora-background {
   background-color: hsl(var(--background));
   position: relative;
   overflow: hidden;
+  --x-fg-0: -20vmin; --y-fg-0: -20vmin;
+  --x-fg-1: 40vmin; --y-fg-1: -40vmin;
+  --x-fg-2: 0vmin; --y-fg-2: 40vmin;
+  --x-fg-3: -40vmin; --y-fg-3: 0vmin;
+
+  --x-bg-0: 20vmin; --y-bg-0: 20vmin;
+  --x-bg-1: -40vmin; --y-bg-1: 40vmin;
+  --x-bg-2: 0vmin; --y-bg-2: -40vmin;
+  --x-bg-3: 40vmin; --y-bg-3: 0vmin;
 }
 
 .aurora-background::before, .aurora-background::after {
   content: "";
   position: absolute;
   filter: blur(100px);
+  will-change: transform;
   z-index: 0;
 }
 
 .aurora-background::before {
-  top: -20%;
-  left: -20%;
-  width: 60%;
-  height: 60%;
-  background-image: radial-gradient(circle, hsl(var(--primary) / 0.1) 0%, transparent 70%);
+  top: 0;
+  left: 0;
+  width: 60vmax;
+  height: 60vmax;
+  border-radius: 50%;
+  background-image: radial-gradient(circle, hsl(var(--primary) / 0.15) 0%, transparent 60%);
+  animation: aurora-fg 20s linear infinite;
 }
 
 .aurora-background::after {
-  bottom: -20%;
-  right: -20%;
-  width: 60%;
-  height: 60%;
-  background-image: radial-gradient(circle, hsl(var(--secondary) / 0.15) 0%, transparent 70%);
+  bottom: 0;
+  right: 0;
+  width: 50vmax;
+  height: 50vmax;
+  border-radius: 50%;
+  background-image: radial-gradient(circle, hsl(var(--secondary) / 0.1) 0%, transparent 70%);
+  animation: aurora-bg 25s linear infinite;
 }
 
 
