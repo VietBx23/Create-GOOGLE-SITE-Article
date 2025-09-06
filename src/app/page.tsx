@@ -318,7 +318,7 @@ export default function GSiteAutomatorPage() {
                        <FormDescription>Keywords that will be reused across multiple articles.</FormDescription>
                       <FormControl>
                         <Textarea
-                          placeholder="e.g., keyword one, keyword two&#10;Separated by commas or new lines."
+                          placeholder="e.g., keyword one, keyword two\nSeparated by commas or new lines."
                           {...field}
                           className="min-h-[100px] text-base"
                         />
@@ -338,7 +338,7 @@ export default function GSiteAutomatorPage() {
                       <FormDescription>Each keyword will be used to generate a unique article.</FormDescription>
                       <FormControl>
                         <Textarea
-                          placeholder="e.g., keyword three, keyword four&#10;Separated by commas or new lines."
+                          placeholder="e.g., keyword three, keyword four\nSeparated by commas or new lines."
                           {...field}
                           className="min-h-[100px] text-base"
                         />
