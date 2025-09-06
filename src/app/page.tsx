@@ -12,11 +12,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardFooter,
-  CardContent,
 } from "@/components/ui/card";
 import {
   Dialog,
@@ -236,32 +236,19 @@ export default function GSiteAutomatorPage() {
     }
   };
   
-  const copyHtmlContent = async (htmlContent: string) => {
-    try {
-      const blob = new Blob([htmlContent], { type: 'text/html' });
-      const clipboardItem = new ClipboardItem({ 'text/html': blob });
-      await navigator.clipboard.write([clipboardItem]);
-      toast({
-        title: "Copied!",
-        description: "Content copied to clipboard as HTML.",
-      });
-    } catch (err) {
-      console.error("Failed to copy content: ", err);
-      // Fallback for older browsers
-      const listener = (e: ClipboardEvent) => {
-        if (!e.clipboardData) return;
-        e.clipboardData.setData('text/html', htmlContent);
-        e.clipboardData.setData('text/plain', htmlContent);
-        e.preventDefault();
-      };
-      document.addEventListener('copy', listener);
-      document.execCommand('copy');
-      document.removeEventListener('copy', listener);
-      toast({
-        title: "Copied!",
-        description: "Content copied to clipboard as HTML (fallback).",
-      });
-    }
+  const copyHtmlContent = (htmlContent: string) => {
+    const listener = (e: ClipboardEvent) => {
+      e.clipboardData?.setData('text/html', htmlContent);
+      e.clipboardData?.setData('text/plain', htmlContent);
+      e.preventDefault();
+    };
+    document.addEventListener('copy', listener);
+    document.execCommand('copy');
+    document.removeEventListener('copy', listener);
+    toast({
+      title: "Copied!",
+      description: "Content copied to clipboard as HTML.",
+    });
   };
   
   const downloadArticleAsTxt = (article: Article) => {
@@ -283,11 +270,11 @@ export default function GSiteAutomatorPage() {
 
 
   return (
-    <div className="min-h-screen w-full dotted-background">
+    <div className="min-h-screen w-full dotted-background animate-fade-in">
       <main className="container mx-auto px-4 py-8 md:py-16">
-        <header className="text-center mb-12 animate-fade-in-down">
+        <header className="text-center mb-12">
           <div className="flex justify-center items-center gap-4 mb-4">
-             <h1 className="font-heading text-4xl md:text-6xl font-bold text-primary">
+             <h1 className="font-heading text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary via-orange-400 to-amber-500">
               GSite Automator
             </h1>
             <Link href="/playground" passHref>
@@ -302,13 +289,13 @@ export default function GSiteAutomatorPage() {
           </p>
         </header>
 
-        <Card className="max-w-4xl mx-auto shadow-2xl shadow-primary/10 rounded-2xl border-primary/20 animate-fade-in-up">
+        <Card className="max-w-4xl mx-auto shadow-2xl rounded-2xl border-primary/10 animate-glowing-card">
             <CardContent className="p-2">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-8">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <FormLabel>Preset Primary Keywords</FormLabel>
+                    <Label className="font-semibold text-lg">Preset Primary Keywords</Label>
                     <KeywordSuggester />
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -325,15 +312,15 @@ export default function GSiteAutomatorPage() {
                   name="primaryKeywords"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Key className="h-4 w-4 text-primary" /> Primary Keywords
+                      <FormLabel className="flex items-center gap-2 font-semibold text-lg">
+                        <Key className="h-5 w-5 text-primary" /> Primary Keywords
                       </FormLabel>
                        <FormDescription>Keywords that will be reused across multiple articles.</FormDescription>
                       <FormControl>
                         <Textarea
                           placeholder="e.g., keyword one, keyword two&#10;Separated by commas or new lines."
                           {...field}
-                          className="min-h-[100px]"
+                          className="min-h-[100px] text-base"
                         />
                       </FormControl>
                       <FormMessage />
@@ -345,15 +332,15 @@ export default function GSiteAutomatorPage() {
                   name="secondaryKeywords"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Tags className="h-4 w-4 text-primary" /> Secondary Keywords
+                      <FormLabel className="flex items-center gap-2 font-semibold text-lg">
+                        <Tags className="h-5 w-5 text-primary" /> Secondary Keywords
                       </FormLabel>
                       <FormDescription>Each keyword will be used to generate a unique article.</FormDescription>
                       <FormControl>
                         <Textarea
                           placeholder="e.g., keyword three, keyword four&#10;Separated by commas or new lines."
                           {...field}
-                          className="min-h-[100px]"
+                          className="min-h-[100px] text-base"
                         />
                       </FormControl>
                       <FormMessage />
@@ -366,11 +353,11 @@ export default function GSiteAutomatorPage() {
                     name="cy"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <CalendarDays className="h-4 w-4 text-primary" /> CY Value
+                        <FormLabel className="flex items-center gap-2 font-semibold text-lg">
+                          <CalendarDays className="h-5 w-5 text-primary" /> CY Value
                         </FormLabel>
                         <FormControl>
-                          <Input placeholder="e.g., 2025" {...field} />
+                          <Input placeholder="e.g., 2025" {...field} className="text-base"/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -381,8 +368,8 @@ export default function GSiteAutomatorPage() {
                     name="chosenLink"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="flex items-center gap-2">
-                          <LinkIcon className="h-4 w-4 text-primary" /> Domain Link
+                        <FormLabel className="flex items-center gap-2 font-semibold text-lg">
+                          <LinkIcon className="h-5 w-5 text-primary" /> Domain Link
                         </FormLabel>
                          <div className="flex flex-wrap gap-2 mb-2">
                            {presetLinks.map(link => (
@@ -392,7 +379,7 @@ export default function GSiteAutomatorPage() {
                            ))}
                          </div>
                         <FormControl>
-                          <Input placeholder="e.g., example.com" {...field} />
+                          <Input placeholder="e.g., example.com" {...field} className="text-base"/>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -400,14 +387,14 @@ export default function GSiteAutomatorPage() {
                   />
                 </div>
                 <CardFooter className="px-0 pt-6">
-                  <Button type="submit" disabled={isPending} size="lg" className="w-full font-bold text-base transition-transform hover:scale-105">
+                  <Button type="submit" disabled={isPending} size="lg" className="w-full font-bold text-lg transition-transform hover:scale-105 bg-gradient-to-r from-primary to-amber-500 hover:shadow-lg hover:shadow-primary/40">
                     {isPending ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     ) : (
-                      <Sparkles className="mr-2 h-4 w-4" />
+                      <Sparkles className="mr-2 h-5 w-5" />
                     )}
                     Generate Articles
-                    <ChevronRight className="ml-2 h-5 w-5" />
+                    <ChevronRight className="ml-2 h-6 w-6" />
                   </Button>
                 </CardFooter>
               </form>
@@ -416,7 +403,7 @@ export default function GSiteAutomatorPage() {
         </Card>
 
         {articles.length > 0 && (
-          <section className="mt-16 animate-fade-in-up">
+          <section className="mt-16 animate-fade-in" style={{animationDelay: '0.5s'}}>
             <div className="text-center mb-8">
                 <h2 className="text-center font-heading text-3xl md:text-4xl font-bold text-primary mb-2">
                 Generated Articles
@@ -425,7 +412,7 @@ export default function GSiteAutomatorPage() {
             </div>
             <div className="space-y-4 max-w-4xl mx-auto">
               {articles.map((article, index) => (
-                <Card key={index} className="shadow-lg overflow-hidden rounded-xl transition-transform hover:scale-[1.02] hover:shadow-primary/20">
+                <Card key={index} className="shadow-lg overflow-hidden rounded-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-primary/20">
                   <CardHeader>
                     <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                        <CardTitle className="text-lg font-normal flex-1">
