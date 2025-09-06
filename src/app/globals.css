@@ -63,12 +63,35 @@
   }
 }
 
-.dotted-background {
-    background-color: hsl(var(--background));
-    background-image:  radial-gradient(hsl(var(--primary) / 0.2) 1px, transparent 1px);
-    background-size: 16px 16px;
-    background-attachment: fixed;
+.aurora-background {
+  background-color: hsl(var(--background));
+  position: relative;
+  overflow: hidden;
 }
+
+.aurora-background::before, .aurora-background::after {
+  content: "";
+  position: absolute;
+  filter: blur(100px);
+  z-index: 0;
+}
+
+.aurora-background::before {
+  top: -20%;
+  left: -20%;
+  width: 60%;
+  height: 60%;
+  background-image: radial-gradient(circle, hsl(var(--primary) / 0.1) 0%, transparent 70%);
+}
+
+.aurora-background::after {
+  bottom: -20%;
+  right: -20%;
+  width: 60%;
+  height: 60%;
+  background-image: radial-gradient(circle, hsl(var(--secondary) / 0.15) 0%, transparent 70%);
+}
+
 
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }

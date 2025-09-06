@@ -266,8 +266,8 @@ export default function GSiteAutomatorPage() {
 
 
   return (
-    <div className="min-h-screen w-full dotted-background">
-      <main className="container mx-auto px-4 py-12 md:py-20">
+    <div className="min-h-screen w-full aurora-background">
+      <main className="container mx-auto px-4 py-12 md:py-20 relative z-10">
         <div className="max-w-4xl mx-auto animate-fade-in">
           
           <Card className="shadow-2xl shadow-primary/10 rounded-2xl border-primary/20 transition-all duration-300 hover:shadow-primary/20">
