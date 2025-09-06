@@ -91,15 +91,18 @@ export async function generateArticles(
       const domain = `https://${validatedData.chosenLink}/`;
       const linkHtml = `<a href="${domain}" target="_blank">${validatedData.chosenLink}</a>`;
       
-      const titleWithLink = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${linkHtml}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
+      const titleForCopyRaw = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${linkHtml}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
+      const titleWithLink = `<p style="font-size: 36px; color: white;">${titleForCopyRaw}</p>`;
+
       const plainTitle = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
+      
       const titleForContent = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${linkHtml}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
       
       let template = TEMPLATES[i % TEMPLATES.length];
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
       const date = format(today, 'yyyy-MM-dd');
 
-      const mainLink = `<p style="font-size: 36px; text-align: left; line-height: 1; margin: 2rem 0;"><a href="${domain}" target="_blank" style="text-decoration: none; color: white; font-weight: bold; background-color: black; padding: 5px 10px; border-radius: 5px;">👉👉立即进入👈👈</a></p>`;
+      const mainLink = `<p style="font-size: 36px; text-align: left; line-height: 1; margin: 2rem 0;"><a href="${domain}" target="_blank" style="text-decoration: none; color: black; font-weight: bold;">👉👉立即进入👈👈</a></p>`;
       
       let content = template
         .replace(/{titleForContent}/g, titleForContent)
