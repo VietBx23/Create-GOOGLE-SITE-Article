@@ -236,22 +236,34 @@ export default function GSiteAutomatorPage() {
     }
   };
   
-  const copyHtmlContent = (htmlContent: string) => {
-    const listener = (e: ClipboardEvent) => {
-      if (!e.clipboardData) return;
-      e.clipboardData.setData('text/html', htmlContent);
-      e.clipboardData.setData('text/plain', htmlContent);
-      e.preventDefault();
-    };
-    document.addEventListener('copy', listener);
-    document.execCommand('copy');
-    document.removeEventListener('copy', listener);
-    toast({
-      title: "Copied!",
-      description: "Content copied to clipboard as HTML.",
-    });
+  const copyHtmlContent = async (htmlContent: string) => {
+    try {
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const clipboardItem = new ClipboardItem({ 'text/html': blob });
+      await navigator.clipboard.write([clipboardItem]);
+      toast({
+        title: "Copied!",
+        description: "Content copied to clipboard as HTML.",
+      });
+    } catch (err) {
+      console.error("Failed to copy content: ", err);
+      // Fallback for older browsers
+      const listener = (e: ClipboardEvent) => {
+        if (!e.clipboardData) return;
+        e.clipboardData.setData('text/html', htmlContent);
+        e.clipboardData.setData('text/plain', htmlContent);
+        e.preventDefault();
+      };
+      document.addEventListener('copy', listener);
+      document.execCommand('copy');
+      document.removeEventListener('copy', listener);
+      toast({
+        title: "Copied!",
+        description: "Content copied to clipboard as HTML (fallback).",
+      });
+    }
   };
-
+  
   const downloadArticleAsTxt = (article: Article) => {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = article.content;
@@ -273,13 +285,13 @@ export default function GSiteAutomatorPage() {
   return (
     <div className="min-h-screen w-full dotted-background">
       <main className="container mx-auto px-4 py-8 md:py-16">
-        <header className="text-center mb-12">
+        <header className="text-center mb-12 animate-fade-in-down">
           <div className="flex justify-center items-center gap-4 mb-4">
              <h1 className="font-heading text-4xl md:text-6xl font-bold text-primary">
               GSite Automator
             </h1>
             <Link href="/playground" passHref>
-              <Button variant="outline" className="rounded-full">
+              <Button variant="outline" className="rounded-full transition-transform hover:scale-105">
                 <Beaker className="mr-2 h-4 w-4" />
                 Playground
               </Button>
@@ -290,7 +302,7 @@ export default function GSiteAutomatorPage() {
           </p>
         </header>
 
-        <Card className="max-w-4xl mx-auto shadow-2xl shadow-primary/10 rounded-2xl border-primary/20">
+        <Card className="max-w-4xl mx-auto shadow-2xl shadow-primary/10 rounded-2xl border-primary/20 animate-fade-in-up">
             <CardContent className="p-2">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 space-y-8">
@@ -301,7 +313,7 @@ export default function GSiteAutomatorPage() {
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {presetKeywords.map(kw => (
-                       <Button key={kw} type="button" size="sm" variant="outline" className="rounded-full" onClick={() => addPresetKeyword(kw)}>
+                       <Button key={kw} type="button" size="sm" variant="outline" className="rounded-full transition-transform hover:scale-105" onClick={() => addPresetKeyword(kw)}>
                         {kw}
                        </Button>
                     ))}
@@ -374,7 +386,7 @@ export default function GSiteAutomatorPage() {
                         </FormLabel>
                          <div className="flex flex-wrap gap-2 mb-2">
                            {presetLinks.map(link => (
-                             <Button key={link} type="button" size="sm" variant="outline" className="rounded-full" onClick={() => form.setValue("chosenLink", link, { shouldValidate: true })}>
+                             <Button key={link} type="button" size="sm" variant="outline" className="rounded-full transition-transform hover:scale-105" onClick={() => form.setValue("chosenLink", link, { shouldValidate: true })}>
                               {link}
                              </Button>
                            ))}
@@ -388,7 +400,7 @@ export default function GSiteAutomatorPage() {
                   />
                 </div>
                 <CardFooter className="px-0 pt-6">
-                  <Button type="submit" disabled={isPending} size="lg" className="w-full font-bold text-base">
+                  <Button type="submit" disabled={isPending} size="lg" className="w-full font-bold text-base transition-transform hover:scale-105">
                     {isPending ? (
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     ) : (
@@ -404,7 +416,7 @@ export default function GSiteAutomatorPage() {
         </Card>
 
         {articles.length > 0 && (
-          <section className="mt-16">
+          <section className="mt-16 animate-fade-in-up">
             <div className="text-center mb-8">
                 <h2 className="text-center font-heading text-3xl md:text-4xl font-bold text-primary mb-2">
                 Generated Articles
@@ -413,7 +425,7 @@ export default function GSiteAutomatorPage() {
             </div>
             <div className="space-y-4 max-w-4xl mx-auto">
               {articles.map((article, index) => (
-                <Card key={index} className="shadow-lg overflow-hidden rounded-xl">
+                <Card key={index} className="shadow-lg overflow-hidden rounded-xl transition-transform hover:scale-[1.02] hover:shadow-primary/20">
                   <CardHeader>
                     <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                        <CardTitle className="text-lg font-normal flex-1">
@@ -424,6 +436,7 @@ export default function GSiteAutomatorPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => copyHtmlContent(article.titleWithLink)}
+                          className="transition-transform hover:scale-105"
                         >
                           <ClipboardCopy className="mr-2 h-4 w-4" />
                           Title
@@ -432,6 +445,7 @@ export default function GSiteAutomatorPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => copyHtmlContent(article.content)}
+                           className="transition-transform hover:scale-105"
                         >
                           <ClipboardCopy className="mr-2 h-4 w-4" />
                           Content
@@ -440,6 +454,7 @@ export default function GSiteAutomatorPage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => downloadArticleAsTxt(article)}
+                           className="transition-transform hover:scale-110"
                         >
                           <Download className="h-4 w-4" />
                            <span className="sr-only">Download</span>
