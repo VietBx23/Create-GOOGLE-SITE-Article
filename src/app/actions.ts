@@ -13,7 +13,8 @@ const formSchema = z.object({
 });
 
 type Article = {
-  title: string;
+  plainTitle: string;
+  titleWithLink: string;
   content: string;
 };
 
@@ -108,7 +109,7 @@ export async function generateArticles(
       
       const htmlContent = content.replace(/\n/g, '<br />');
       
-      results.push({ title: plainTitle, content: htmlContent });
+      results.push({ plainTitle, titleWithLink, content: htmlContent });
     }
 
     return { success: true, results };

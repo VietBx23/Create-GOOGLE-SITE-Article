@@ -60,7 +60,8 @@ const formSchema = z.object({
 });
 
 type Article = {
-  title: string;
+  plainTitle: string;
+  titleWithLink: string;
   content: string;
 };
 
@@ -234,64 +235,36 @@ export default function GSiteAutomatorPage() {
     }
   };
 
-  const copyToClipboardFallback = (text: string, type: 'Title' | 'Content') => {
-    const textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    textArea.style.left = "-9999px";
-    textArea.style.top = "-9999px";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-      document.execCommand('copy');
-      toast({
-        title: "Copied!",
-        description: `${type} copied to clipboard.`,
-      });
-    } catch (err) {
-      console.error(`Failed to copy ${type}:`, err);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: `Failed to copy ${type}.`,
-      });
-    } finally {
-      document.body.removeChild(textArea);
-    }
-  };
-  
-  const copyTitle = (title: string) => {
-    if (navigator.clipboard?.writeText) {
-        navigator.clipboard.writeText(title).then(() => {
-             toast({
-                title: "Copied!",
-                description: "Title copied to clipboard.",
-            });
-        }, (err) => {
-            console.error("Failed to copy title: ", err);
-            copyToClipboardFallback(title, "Title");
-        });
-    } else {
-        copyToClipboardFallback(title, "Title");
-    }
-  };
-
   const copyHtmlContent = (htmlContent: string) => {
-    const listener = (e: ClipboardEvent) => {
-      if (!e.clipboardData) return;
-      e.clipboardData.setData('text/html', htmlContent);
-      e.clipboardData.setData('text/plain', htmlContent);
-      e.preventDefault();
-    };
-
-    document.addEventListener('copy', listener);
-    document.execCommand('copy');
-    document.removeEventListener('copy', listener);
-    toast({
-        title: "Copied!",
-        description: "Content copied to clipboard.",
-    });
+    try {
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const plainTextBlob = new Blob([htmlContent.replace(/<[^>]*>?/gm, '')], { type: 'text/plain' });
+      const item = new ClipboardItem({
+        'text/html': blob,
+        'text/plain': plainTextBlob,
+      });
+      navigator.clipboard.write([item]);
+      toast({
+          title: "Copied!",
+          description: "Content copied to clipboard.",
+      });
+    } catch (e) {
+      console.error("Failed to copy content: ", e);
+      // Fallback for older browsers
+      const listener = (ev: ClipboardEvent) => {
+        if (!ev.clipboardData) return;
+        ev.clipboardData.setData('text/html', htmlContent);
+        ev.clipboardData.setData('text/plain', htmlContent);
+        ev.preventDefault();
+      };
+      document.addEventListener('copy', listener);
+      document.execCommand('copy');
+      document.removeEventListener('copy', listener);
+      toast({
+          title: "Copied!",
+          description: "Content copied to clipboard (fallback).",
+      });
+    }
   };
   
   const downloadArticleAsTxt = (article: Article) => {
@@ -299,12 +272,12 @@ export default function GSiteAutomatorPage() {
     tempDiv.innerHTML = article.content;
     const plainText = tempDiv.textContent || tempDiv.innerText || '';
     
-    const textToDownload = `${article.title}\n\n${plainText.trim()}`;
+    const textToDownload = `${article.plainTitle}\n\n${plainText.trim()}`;
     const blob = new Blob([textToDownload], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${article.title}.txt`;
+    link.download = `${article.plainTitle}.txt`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -460,13 +433,13 @@ Separated by commas or new lines."
                   <CardHeader>
                     <div className="flex justify-between items-start gap-4">
                        <CardTitle className="text-lg flex-1">
-                        {index + 1}. {article.title}
+                        {index + 1}. {article.plainTitle}
                        </CardTitle>
                       <div className="flex flex-col sm:flex-row gap-2 items-start">
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => copyTitle(article.title)}
+                          onClick={() => copyHtmlContent(article.titleWithLink)}
                         >
                           <ClipboardCopy className="mr-2 h-4 w-4" />
                           Copy Title
