@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -271,10 +270,10 @@ export default function GSiteAutomatorPage() {
       <main className="container mx-auto px-4 py-12 md:py-20">
         <div className="max-w-4xl mx-auto animate-fade-in">
           <header className="text-center mb-12">
-            <h1 className="text-5xl md:text-6xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary/90 to-primary">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary/90 to-primary">
               GSite Automator
             </h1>
-            <p className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto">
+            <p className="text-base text-muted-foreground mt-4 max-w-2xl mx-auto">
               Your AI-Powered Content Engine for Google Sites. Effortlessly generate keyword-rich articles from a simple form.
             </p>
           </header>
@@ -286,7 +285,7 @@ export default function GSiteAutomatorPage() {
                   <div className="space-y-8">
                      <div>
                       <div className="flex items-center justify-between mb-4">
-                        <Label className="font-semibold text-lg text-foreground">Preset Primary Keywords</Label>
+                        <Label className="font-semibold text-foreground">Preset Primary Keywords</Label>
                         <KeywordSuggester />
                       </div>
                       <div className="flex flex-wrap gap-2">
@@ -304,7 +303,7 @@ export default function GSiteAutomatorPage() {
                             name="primaryKeywords"
                             render={({ field }) => (
                             <FormItem className="md:col-span-2">
-                                <FormLabel className="flex items-center gap-2 font-semibold text-lg">
+                                <FormLabel className="flex items-center gap-2 font-semibold">
                                 <Key className="h-5 w-5 text-primary" /> Primary Keywords
                                 </FormLabel>
                                 <FormDescription>Keywords that will be reused across multiple articles.</FormDescription>
@@ -312,7 +311,7 @@ export default function GSiteAutomatorPage() {
                                 <Textarea
                                     placeholder="e.g., keyword one, keyword two"
                                     {...field}
-                                    className="min-h-[100px] text-base"
+                                    className="min-h-[100px]"
                                 />
                                 </FormControl>
                                 <FormMessage />
@@ -324,7 +323,7 @@ export default function GSiteAutomatorPage() {
                             name="secondaryKeywords"
                             render={({ field }) => (
                             <FormItem className="md:col-span-2">
-                                <FormLabel className="flex items-center gap-2 font-semibold text-lg">
+                                <FormLabel className="flex items-center gap-2 font-semibold">
                                 <Tags className="h-5 w-5 text-primary" /> Secondary Keywords
                                 </FormLabel>
                                 <FormDescription>Each keyword will be used to generate a unique article.</FormDescription>
@@ -332,7 +331,7 @@ export default function GSiteAutomatorPage() {
                                 <Textarea
                                     placeholder="e.g., keyword three, keyword four"
                                     {...field}
-                                    className="min-h-[120px] text-base"
+                                    className="min-h-[120px]"
                                 />
                                 </FormControl>
                                 <FormMessage />
@@ -344,11 +343,11 @@ export default function GSiteAutomatorPage() {
                           name="cy"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="flex items-center gap-2 font-semibold text-lg">
+                              <FormLabel className="flex items-center gap-2 font-semibold">
                                 <CalendarDays className="h-5 w-5 text-primary" /> CY Value
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="e.g., 2025" {...field} className="text-base h-11"/>
+                                <Input placeholder="e.g., 2025" {...field} className="h-11"/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -359,11 +358,11 @@ export default function GSiteAutomatorPage() {
                           name="chosenLink"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="flex items-center gap-2 font-semibold text-lg">
+                              <FormLabel className="flex items-center gap-2 font-semibold">
                                 <LinkIcon className="h-5 w-5 text-primary" /> Domain Link
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="e.g., example.com" {...field} className="text-base h-11"/>
+                                <Input placeholder="e.g., example.com" {...field} className="h-11"/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -399,7 +398,7 @@ export default function GSiteAutomatorPage() {
           {articles.length > 0 && (
             <section className="mt-16">
               <div className="text-center mb-8">
-                  <h2 className="text-4xl font-bold tracking-tighter text-foreground">
+                  <h2 className="text-3xl font-bold tracking-tighter text-foreground">
                   Generated Articles
                   </h2>
                   <p className="text-muted-foreground mt-2">Found {articles.length} articles. Ready to copy or download.</p>
@@ -410,7 +409,7 @@ export default function GSiteAutomatorPage() {
                     <CardHeader className="flex flex-row justify-between items-center gap-4 p-4 bg-card">
                       <div className="flex items-center gap-3">
                         <span className="flex items-center justify-center h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold">{index + 1}</span>
-                        <CardTitle className="text-base font-medium flex-1 text-left">
+                        <CardTitle className="text-sm font-medium flex-1 text-left">
                            {article.plainTitle}
                         </CardTitle>
                       </div>
@@ -454,3 +453,5 @@ export default function GSiteAutomatorPage() {
     </div>
   );
 }
+
+    
