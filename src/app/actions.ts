@@ -18,10 +18,10 @@ type Article = {
   content: string;
 };
 
-
 // Generate a pseudo-random alphanumeric string from a seed
 const generatePseudoRandomSuffix = (seed: string, length: number): string => {
     let hash = 0;
+    if (seed.length === 0) return '';
     for (let i = 0; i < seed.length; i++) {
         const char = seed.charCodeAt(i);
         hash = ((hash << 5) - hash) + char;
@@ -70,7 +70,8 @@ export async function generateArticles(
       let selectionPool = [...availableSecondary];
       // Use a deterministic way to select items to avoid hydration issues
       while (selectedSecondary.length < 2 && selectionPool.length > 0) {
-          const candidateIndex = (today.getSeconds() + i + selectedSecondary.length) % selectionPool.length;
+          const seed = i + selectedSecondary.length;
+          const candidateIndex = (seed % selectionPool.length);
           const candidate = selectionPool[candidateIndex];
           selectedSecondary.push(candidate);
           selectionPool.splice(candidateIndex, 1);
@@ -90,7 +91,7 @@ export async function generateArticles(
       const domain = `https://${validatedData.chosenLink}/`;
       const linkHtml = `<a href="${domain}" target="_blank">${validatedData.chosenLink}</a>`;
       
-      const titleWithLink = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：<a href="${domain}" target="_blank">${validatedData.chosenLink}</a>】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
+      const titleWithLink = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${linkHtml}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
       const plainTitle = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
       const titleForContent = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${linkHtml}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
       
@@ -98,10 +99,10 @@ export async function generateArticles(
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
       const date = format(today, 'yyyy-MM-dd');
 
-      const mainLink = `<p style="font-size: 8rem; text-align: left;"><a href="${domain}" target="_blank">👉👉立即进入👈👈</a></p>`;
+      const mainLink = `<p style="font-size: 8rem; text-align: left; line-height: 1; margin: 2rem 0;"><a href="${domain}" target="_blank" style="text-decoration: none; color: hsl(var(--primary)); font-weight: bold;">👉👉立即进入👈👈</a></p>`;
       
       let content = template
-        .replace(/{title}/g, titleForContent)
+        .replace(/{titleForContent}/g, titleForContent)
         .replace(/{app}/g, appFixed)
         .replace(/{url}/g, urlFixed)
         .replace(/{keywords_text}/g, keywordsText)

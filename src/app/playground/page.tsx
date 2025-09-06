@@ -29,7 +29,8 @@ import {
   Sparkles,
   Loader2,
   Home,
-  ClipboardCopy
+  ClipboardCopy,
+  Wand2
 } from "lucide-react";
 
 const formSchema = z.object({
@@ -79,29 +80,29 @@ export default function PlaygroundPage() {
   
 
   return (
-    <div className="min-h-screen bg-background font-body text-foreground">
+    <div className="min-h-screen dotted-background">
       <main className="container mx-auto px-4 py-8 md:py-16">
         <header className="text-center mb-12">
            <div className="flex justify-center items-center gap-4 mb-4">
-            <h1 className="font-headline text-4xl md:text-6xl font-bold text-primary">
+            <h1 className="font-heading text-4xl md:text-6xl font-bold text-primary">
               AI Playground
             </h1>
              <Link href="/" passHref>
-              <Button variant="outline">
+              <Button variant="outline" className="rounded-full">
                 <Home className="mr-2" />
                 GSite Automator
               </Button>
             </Link>
           </div>
           <p className="text-lg md:text-xl text-muted-foreground">
-            Experiment with Generative AI
+            A simple interface to experiment with the Genkit AI model.
           </p>
         </header>
 
-        <Card className="max-w-3xl mx-auto shadow-lg">
+        <Card className="max-w-3xl mx-auto shadow-2xl shadow-primary/10 rounded-2xl border-primary/20">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Sparkles />
+              <Wand2 />
               Prompt Zone
             </CardTitle>
             <CardDescription>
@@ -117,7 +118,7 @@ export default function PlaygroundPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
-                         Prompt
+                         Your Prompt
                       </FormLabel>
                       <FormControl>
                         <Textarea
@@ -131,7 +132,7 @@ export default function PlaygroundPage() {
                   )}
                 />
                 
-                <Button type="submit" disabled={isPending} className="w-full">
+                <Button type="submit" disabled={isPending} className="w-full" size="lg">
                   {isPending ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   ) : (
@@ -146,10 +147,10 @@ export default function PlaygroundPage() {
 
         {generatedContent && (
           <section className="mt-12">
-            <h2 className="text-center font-headline text-3xl md:text-4xl font-bold text-primary mb-8">
+            <h2 className="text-center font-heading text-3xl md:text-4xl font-bold text-primary mb-8">
               Generated Content
             </h2>
-            <Card className="shadow-lg max-w-3xl mx-auto">
+            <Card className="shadow-lg max-w-3xl mx-auto rounded-xl">
               <CardHeader>
                 <div className="flex justify-end">
                     <Button variant="ghost" size="icon" onClick={() => copyToClipboard(generatedContent)}>
@@ -159,7 +160,7 @@ export default function PlaygroundPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="prose dark:prose-invert max-w-none">
+                <div className="prose dark:prose-invert max-w-none prose-p:text-foreground prose-headings:text-primary">
                     {generatedContent}
                 </div>
               </CardContent>
