@@ -90,8 +90,9 @@ export async function generateArticles(
       const domain = `https://${validatedData.chosenLink}/`;
       const linkHtml = `<a href="${domain}" target="_blank">${validatedData.chosenLink}</a>`;
       
-      const titleWithLink = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${linkHtml}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
+      const titleWithLink = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：<a href="${domain}" target="_blank">${validatedData.chosenLink}</a>】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
       const plainTitle = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${validatedData.chosenLink}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
+      const titleForContent = `${uniqueKeywordList[0]} - ${uniqueKeywordList[1]} -【链接地址：${linkHtml}】- ${uniqueKeywordList[2]} - ${uniqueKeywordList[3]} - ${fileSuffix} ${randomSuffix}`;
       
       let template = TEMPLATES[i % TEMPLATES.length];
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
@@ -100,7 +101,7 @@ export async function generateArticles(
       const mainLink = `<p style="font-size: 8rem; text-align: left;"><a href="${domain}" target="_blank">👉👉立即进入👈👈</a></p>`;
       
       let content = template
-        .replace(/{title}/g, `<a href="${domain}" target="_blank">${titleWithLink}</a>`)
+        .replace(/{title}/g, titleForContent)
         .replace(/{app}/g, appFixed)
         .replace(/{url}/g, urlFixed)
         .replace(/{keywords_text}/g, keywordsText)
