@@ -283,12 +283,11 @@ export default function GSiteAutomatorPage() {
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <CardContent className="p-8">
                   <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                      <FormField
+                     <FormField
                         control={form.control}
                         name="primaryKeywords"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <div className="flex items-center justify-between mb-1">
                               <FormLabel className="flex items-center gap-2 font-semibold">
                                 <Key className="h-5 w-5 text-primary" /> Primary Keywords
@@ -319,7 +318,7 @@ export default function GSiteAutomatorPage() {
                         control={form.control}
                         name="secondaryKeywords"
                         render={({ field }) => (
-                          <FormItem className="md:col-span-2">
+                          <FormItem>
                             <FormLabel className="flex items-center gap-2 font-semibold">
                               <Tags className="h-5 w-5 text-primary" /> Secondary Keywords
                             </FormLabel>
@@ -335,6 +334,7 @@ export default function GSiteAutomatorPage() {
                           </FormItem>
                         )}
                       />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                       <FormField
                         control={form.control}
                         name="chosenLink"
@@ -343,6 +343,7 @@ export default function GSiteAutomatorPage() {
                             <FormLabel className="flex items-center gap-2 font-semibold">
                               <LinkIcon className="h-5 w-5 text-primary" /> Domain Link
                             </FormLabel>
+                             <FormDescription>The domain to link to in the articles.</FormDescription>
                             <FormControl>
                               <Input placeholder="e.g., example.com" {...field} className="h-11" />
                             </FormControl>
@@ -366,6 +367,7 @@ export default function GSiteAutomatorPage() {
                             <FormLabel className="flex items-center gap-2 font-semibold">
                               <CalendarDays className="h-5 w-5 text-primary" /> CY Value
                             </FormLabel>
+                             <FormDescription>A custom value to include in titles.</FormDescription>
                             <FormControl>
                               <Input placeholder="e.g., 2025" {...field} className="h-11" />
                             </FormControl>
