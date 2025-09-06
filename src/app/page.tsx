@@ -53,7 +53,7 @@ import {
 const formSchema = z.object({
   primaryKeywords: z.string().min(1, "Please enter at least one primary keyword."),
   secondaryKeywords: z.string().min(1, "Please enter at least one secondary keyword."),
-  cy: z.string().min(1, "Please enter a CY value."),
+  cy: z.string().min(1, "Please enter a  value."),
   chosenLink: z.string().min(1, "Please provide a domain link."),
 });
 
@@ -364,7 +364,7 @@ export default function GSiteAutomatorPage() {
                             render={({ field }) => (
                               <FormItem>
                                 <FormLabel className="flex items-center gap-2 font-semibold">
-                                  <CalendarDays className="h-5 w-5 text-primary" /> CY Value
+                                  <CalendarDays className="h-5 w-5 text-primary" /> Value
                                 </FormLabel>
                                  <FormDescription>A custom value to include in titles.</FormDescription>
                                 <FormControl>
