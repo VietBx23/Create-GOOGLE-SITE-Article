@@ -80,7 +80,7 @@ export default function PlaygroundPage() {
   
 
   return (
-    <div className="min-h-screen dotted-background">
+    <div className="min-h-screen w-full dotted-background">
       <main className="container mx-auto px-4 py-8 md:py-16">
         <header className="text-center mb-12">
            <div className="flex justify-center items-center gap-4 mb-4">

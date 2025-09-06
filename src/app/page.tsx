@@ -266,7 +266,7 @@ export default function GSiteAutomatorPage() {
 
 
   return (
-    <div className="min-h-screen w-full aurora-background">
+    <div className="min-h-screen w-full dotted-background">
       <main className="container mx-auto px-4 py-12 md:py-20 relative z-10">
         <div className="max-w-4xl mx-auto animate-fade-in">
           

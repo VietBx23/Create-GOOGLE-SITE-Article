@@ -58,64 +58,10 @@
   }
 }
 
-@keyframes aurora-fg {
-  0% { transform: translate(var(--x-fg-0), var(--y-fg-0)) }
-  25% { transform: translate(var(--x-fg-1), var(--y-fg-1)) }
-  50% { transform: translate(var(--x-fg-2), var(--y-fg-2)) }
-  75% { transform: translate(var(--x-fg-3), var(--y-fg-3)) }
-  100% { transform: translate(var(--x-fg-0), var(--y-fg-0)) }
-}
-
-@keyframes aurora-bg {
-  0% { transform: translate(var(--x-bg-0), var(--y-bg-0)) }
-  25% { transform: translate(var(--x-bg-1), var(--y-bg-1)) }
-  50% { transform: translate(var(--x-bg-2), var(--y-bg-2)) }
-  75% { transform: translate(var(--x-bg-3), var(--y-bg-3)) }
-  100% { transform: translate(var(--x-bg-0), var(--y-bg-0)) }
-}
-
-
-.aurora-background {
+.dotted-background {
   background-color: hsl(var(--background));
-  position: relative;
-  overflow: hidden;
-  --x-fg-0: -20vmin; --y-fg-0: -20vmin;
-  --x-fg-1: 40vmin; --y-fg-1: -40vmin;
-  --x-fg-2: 0vmin; --y-fg-2: 40vmin;
-  --x-fg-3: -40vmin; --y-fg-3: 0vmin;
-
-  --x-bg-0: 20vmin; --y-bg-0: 20vmin;
-  --x-bg-1: -40vmin; --y-bg-1: 40vmin;
-  --x-bg-2: 0vmin; --y-bg-2: -40vmin;
-  --x-bg-3: 40vmin; --y-bg-3: 0vmin;
-}
-
-.aurora-background::before, .aurora-background::after {
-  content: "";
-  position: absolute;
-  filter: blur(100px);
-  will-change: transform;
-  z-index: 0;
-}
-
-.aurora-background::before {
-  top: 0;
-  left: 0;
-  width: 60vmax;
-  height: 60vmax;
-  border-radius: 50%;
-  background-image: radial-gradient(circle, hsl(var(--primary) / 0.15) 0%, transparent 60%);
-  animation: aurora-fg 20s linear infinite;
-}
-
-.aurora-background::after {
-  bottom: 0;
-  right: 0;
-  width: 50vmax;
-  height: 50vmax;
-  border-radius: 50%;
-  background-image: radial-gradient(circle, hsl(var(--secondary) / 0.1) 0%, transparent 70%);
-  animation: aurora-bg 25s linear infinite;
+  background-image: radial-gradient(hsl(var(--primary) / 0.2) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 
