@@ -99,7 +99,7 @@ export async function generateArticles(
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
       const date = format(today, 'yyyy-MM-dd');
 
-      const mainLink = `<p style="font-size: 8rem; text-align: left; line-height: 1; margin: 2rem 0;"><a href="${domain}" target="_blank" style="text-decoration: none; color: hsl(var(--primary)); font-weight: bold;">👉👉立即进入👈👈</a></p>`;
+      const mainLink = `<p style="font-size: 36px; text-align: left; line-height: 1; margin: 2rem 0;"><a href="${domain}" target="_blank" style="text-decoration: none; color: white; font-weight: bold; background-color: black; padding: 5px 10px; border-radius: 5px;">👉👉立即进入👈👈</a></p>`;
       
       let content = template
         .replace(/{titleForContent}/g, titleForContent)
