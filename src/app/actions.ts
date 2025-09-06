@@ -95,7 +95,7 @@ export async function generateArticles(
       const keywordsText = uniqueKeywordList.filter(Boolean).join(', ');
       const date = format(today, 'yyyy-MM-dd');
 
-      const mainLink = `<p style="font-size: 4rem; text-align: left;"><a href="${domain}" target="_blank">👉👉立即进入👈👈</a></p>`;
+      const mainLink = `<p style="font-size: 5rem; text-align: left;"><a href="${domain}" target="_blank">👉👉立即进入👈👈</a></p>`;
       
       let content = template
         .replace(/{title}/g, titleWithLink)
