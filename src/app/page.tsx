@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { generateArticles, suggestArticleKeywords } from "./actions";
 import { useToast } from "@/hooks/use-toast";
-import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -49,12 +48,8 @@ import {
   ClipboardCopy,
   Loader2,
   Copy,
-  Beaker,
   Download,
-  ChevronRight,
-  Home
 } from "lucide-react";
-import { SidebarProvider, Sidebar, SidebarTrigger, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarHeader, SidebarInset } from "@/components/ui/sidebar";
 
 const formSchema = z.object({
   primaryKeywords: z.string().min(1, "Please enter at least one primary keyword."),
@@ -116,7 +111,6 @@ const KeywordSuggester = () => {
     document.body.removeChild(textArea);
   }
 
-
   const copySuggestions = () => {
     if (suggestions.length === 0) return;
     const textToCopy = suggestions.join(", ");
@@ -138,7 +132,7 @@ const KeywordSuggester = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="ghost" className="text-primary hover:text-primary/90">
           <Sparkles className="mr-2 h-4 w-4" />
           AI Keyword Suggester
         </Button>
@@ -209,6 +203,7 @@ export default function GSiteAutomatorPage() {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    setArticles([]); // Clear previous results immediately
     startTransition(async () => {
       const result = await generateArticles(values);
       if (result.success && result.results) {
@@ -272,116 +267,88 @@ export default function GSiteAutomatorPage() {
 
 
   return (
-    <div className="dotted-background">
-    <SidebarProvider>
-      <Sidebar>
-        <SidebarHeader>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg">
-              G
-            </div>
-            <span className="font-semibold text-lg">GSite Automator</span>
-          </div>
-        </SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton isActive>
-              <Home />
+    <div className="min-h-screen dotted-background">
+      <main className="container mx-auto px-4 py-12 md:py-20">
+        <div className="max-w-4xl mx-auto animate-fade-in">
+          <header className="text-center mb-12">
+            <h1 className="text-5xl md:text-6xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary/90 to-primary">
               GSite Automator
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-             <Link href="/playground" passHref>
-                <SidebarMenuButton>
-                  <Beaker />
-                  Playground
-                </SidebarMenuButton>
-              </Link>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </Sidebar>
-      <SidebarInset>
-        <main className="p-4 md:p-8 animate-fade-in">
-          <div className="max-w-5xl mx-auto">
-            <header className="mb-12">
-              <h1 className="font-heading text-4xl font-bold text-foreground">
-                GSite Automator
-              </h1>
-              <p className="text-lg text-muted-foreground mt-2">
-                Your AI-Powered Content Engine for Google Sites. Effortlessly generate keyword-rich articles from a simple form.
-              </p>
-            </header>
+            </h1>
+            <p className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto">
+              Your AI-Powered Content Engine for Google Sites. Effortlessly generate keyword-rich articles from a simple form.
+            </p>
+          </header>
 
-            <Card className="shadow-lg rounded-2xl">
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)}>
-                  <CardContent className="p-6">
-                    <div className="space-y-8">
-                       <div>
-                        <div className="flex items-center justify-between mb-4">
-                          <Label className="font-semibold text-base">Preset Primary Keywords</Label>
-                          <KeywordSuggester />
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {presetKeywords.map(kw => (
-                            <Button key={kw} type="button" size="sm" variant="outline" className="rounded-full" onClick={() => addPresetKeyword(kw)}>
-                              {kw}
-                            </Button>
-                          ))}
-                        </div>
+          <Card className="shadow-2xl shadow-primary/10 rounded-2xl border-primary/20 transition-all duration-300 hover:shadow-primary/20">
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)}>
+                <CardContent className="p-8">
+                  <div className="space-y-8">
+                     <div>
+                      <div className="flex items-center justify-between mb-4">
+                        <Label className="font-semibold text-lg text-foreground">Preset Primary Keywords</Label>
+                        <KeywordSuggester />
                       </div>
+                      <div className="flex flex-wrap gap-2">
+                        {presetKeywords.map(kw => (
+                          <Button key={kw} type="button" size="sm" variant="outline" className="rounded-full transition-all duration-200 hover:bg-accent hover:scale-105" onClick={() => addPresetKeyword(kw)}>
+                            {kw}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
 
-                      <FormField
-                        control={form.control}
-                        name="primaryKeywords"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="flex items-center gap-2 font-semibold text-base">
-                              <Key className="h-5 w-5 text-primary" /> Primary Keywords
-                            </FormLabel>
-                            <FormDescription>Keywords that will be reused across multiple articles.</FormDescription>
-                            <FormControl>
-                              <Textarea
-                                placeholder="e.g., keyword one, keyword two"
-                                {...field}
-                                className="min-h-[100px]"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="secondaryKeywords"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="flex items-center gap-2 font-semibold text-base">
-                              <Tags className="h-5 w-5 text-primary" /> Secondary Keywords
-                            </FormLabel>
-                            <FormDescription>Each keyword will be used to generate a unique article.</FormDescription>
-                            <FormControl>
-                              <Textarea
-                                placeholder="e.g., keyword three, keyword four"
-                                {...field}
-                                className="min-h-[100px]"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                        <FormField
+                            control={form.control}
+                            name="primaryKeywords"
+                            render={({ field }) => (
+                            <FormItem className="md:col-span-2">
+                                <FormLabel className="flex items-center gap-2 font-semibold text-lg">
+                                <Key className="h-5 w-5 text-primary" /> Primary Keywords
+                                </FormLabel>
+                                <FormDescription>Keywords that will be reused across multiple articles.</FormDescription>
+                                <FormControl>
+                                <Textarea
+                                    placeholder="e.g., keyword one, keyword two"
+                                    {...field}
+                                    className="min-h-[100px] text-base"
+                                />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="secondaryKeywords"
+                            render={({ field }) => (
+                            <FormItem className="md:col-span-2">
+                                <FormLabel className="flex items-center gap-2 font-semibold text-lg">
+                                <Tags className="h-5 w-5 text-primary" /> Secondary Keywords
+                                </FormLabel>
+                                <FormDescription>Each keyword will be used to generate a unique article.</FormDescription>
+                                <FormControl>
+                                <Textarea
+                                    placeholder="e.g., keyword three, keyword four"
+                                    {...field}
+                                    className="min-h-[120px] text-base"
+                                />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
                         <FormField
                           control={form.control}
                           name="cy"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="flex items-center gap-2 font-semibold text-base">
+                              <FormLabel className="flex items-center gap-2 font-semibold text-lg">
                                 <CalendarDays className="h-5 w-5 text-primary" /> CY Value
                               </FormLabel>
                               <FormControl>
-                                <Input placeholder="e.g., 2025" {...field} />
+                                <Input placeholder="e.g., 2025" {...field} className="text-base h-11"/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -392,92 +359,98 @@ export default function GSiteAutomatorPage() {
                           name="chosenLink"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel className="flex items-center gap-2 font-semibold text-base">
+                              <FormLabel className="flex items-center gap-2 font-semibold text-lg">
                                 <LinkIcon className="h-5 w-5 text-primary" /> Domain Link
                               </FormLabel>
-                              <div className="flex flex-wrap gap-2 mb-2">
-                                {presetLinks.map(link => (
-                                  <Button key={link} type="button" size="sm" variant="outline" className="rounded-full" onClick={() => form.setValue("chosenLink", link, { shouldValidate: true })}>
-                                    {link}
-                                  </Button>
-                                ))}
-                              </div>
                               <FormControl>
-                                <Input placeholder="e.g., example.com" {...field} />
+                                <Input placeholder="e.g., example.com" {...field} className="text-base h-11"/>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
-                      </div>
+                         <div className="md:col-span-2">
+                             <Label className="font-semibold text-base text-muted-foreground">Preset Links</Label>
+                             <div className="flex flex-wrap gap-2 mt-2">
+                                {presetLinks.map(link => (
+                                  <Button key={link} type="button" size="sm" variant="outline" className="rounded-full transition-all duration-200 hover:bg-accent hover:scale-105" onClick={() => form.setValue("chosenLink", link, { shouldValidate: true })}>
+                                    {link}
+                                  </Button>
+                                ))}
+                              </div>
+                         </div>
                     </div>
-                  </CardContent>
-                  <CardFooter className="bg-muted/50 p-6 rounded-b-2xl">
-                    <Button type="submit" disabled={isPending} size="lg" className="w-full font-bold">
-                      {isPending ? (
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      ) : (
-                        <Sparkles className="mr-2 h-5 w-5" />
-                      )}
-                      Generate Articles
-                      <ChevronRight className="ml-2 h-6 w-6" />
-                    </Button>
-                  </CardFooter>
-                </form>
-              </Form>
-            </Card>
+                  </div>
+                </CardContent>
+                <CardFooter className="p-6 bg-muted/30 rounded-b-2xl mt-8">
+                  <Button type="submit" disabled={isPending} size="lg" className="w-full font-bold text-lg h-14 bg-gradient-to-r from-primary/90 to-primary shadow-lg shadow-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/40 hover:scale-[1.02]">
+                    {isPending ? (
+                      <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                    ) : (
+                      <Sparkles className="mr-3 h-6 w-6" />
+                    )}
+                    Generate Articles
+                  </Button>
+                </CardFooter>
+              </form>
+            </Form>
+          </Card>
 
-            {articles.length > 0 && (
-              <section className="mt-16 animate-fade-in" style={{animationDelay: '0.5s'}}>
-                <div className="mb-8">
-                    <h2 className="font-heading text-3xl font-bold text-foreground mb-2">
-                    Generated Articles
-                    </h2>
-                    <p className="text-muted-foreground">Found {articles.length} articles. Ready to copy or download.</p>
-                </div>
-                <div className="space-y-4">
-                  {articles.map((article, index) => (
-                    <Card key={index} className="shadow-md overflow-hidden rounded-xl transition-all duration-300 hover:shadow-xl">
-                      <CardHeader className="flex flex-row justify-between items-start gap-4 p-4 bg-muted/30">
-                        <CardTitle className="text-base font-medium flex-1">
-                          <span className="font-bold text-primary mr-2">{index + 1}.</span> {article.plainTitle}
+          {articles.length > 0 && (
+            <section className="mt-16">
+              <div className="text-center mb-8">
+                  <h2 className="text-4xl font-bold tracking-tighter text-foreground">
+                  Generated Articles
+                  </h2>
+                  <p className="text-muted-foreground mt-2">Found {articles.length} articles. Ready to copy or download.</p>
+              </div>
+              <div className="space-y-4">
+                {articles.map((article, index) => (
+                  <Card key={index} className="shadow-lg overflow-hidden rounded-xl transition-all duration-300 hover:shadow-xl result-card-animation" style={{ animationDelay: `${index * 100}ms` }}>
+                    <CardHeader className="flex flex-row justify-between items-center gap-4 p-4 bg-card">
+                      <div className="flex items-center gap-3">
+                        <span className="flex items-center justify-center h-8 w-8 rounded-full bg-primary text-primary-foreground font-bold">{index + 1}</span>
+                        <CardTitle className="text-base font-medium flex-1 text-left">
+                           {article.plainTitle}
                         </CardTitle>
-                        <div className="flex flex-shrink-0 flex-row gap-2 items-center">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => copyHtmlContent(article.titleWithLink)}
-                          >
-                            <ClipboardCopy className="mr-2 h-4 w-4" />
-                            Title
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => copyHtmlContent(article.content)}
-                          >
-                            <ClipboardCopy className="mr-2 h-4 w-4" />
-                            Content
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => downloadArticleAsTxt(article)}
-                          >
-                            <Download className="h-4 w-4" />
-                            <span className="sr-only">Download</span>
-                          </Button>
-                        </div>
-                      </CardHeader>
-                    </Card>
-                  ))}
-                </div>
-              </section>
-            )}
-          </div>
-        </main>
-        </SidebarInset>
-    </SidebarProvider>
+                      </div>
+                      <div className="flex flex-shrink-0 flex-row gap-2 items-center">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyHtmlContent(article.titleWithLink)}
+                          className="transition-all duration-200 hover:scale-105"
+                        >
+                          <ClipboardCopy className="mr-2 h-4 w-4" />
+                          Title
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyHtmlContent(article.content)}
+                          className="transition-all duration-200 hover:scale-105"
+                        >
+                          <FileText className="mr-2 h-4 w-4" />
+                          Content
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => downloadArticleAsTxt(article)}
+                          className="transition-all duration-200 hover:scale-110 hover:text-primary"
+                        >
+                          <Download className="h-5 w-5" />
+                          <span className="sr-only">Download</span>
+                        </Button>
+                      </div>
+                    </CardHeader>
+                  </Card>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      </main>
     </div>
   );
 }
