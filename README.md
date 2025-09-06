@@ -1,5 +1,3 @@
-# Firebase Studio
+# GSite Automator (Create-GOOGLE-SITE-Article)
 
-This is a NextJS starter in Firebase Studio.
-
-To get started, take a look at src/app/page.tsx.
+This is the GSite Automator project, a Next.js application developed in Firebase Studio.
