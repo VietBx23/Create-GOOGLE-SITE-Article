@@ -18,6 +18,7 @@ type Article = {
   content: string;
 };
 
+
 // Generate a pseudo-random alphanumeric string from a seed
 const generatePseudoRandomSuffix = (seed: string, length: number): string => {
     let hash = 0;
@@ -99,7 +100,7 @@ export async function generateArticles(
       const mainLink = `<p style="font-size: 8rem; text-align: left;"><a href="${domain}" target="_blank">👉👉立即进入👈👈</a></p>`;
       
       let content = template
-        .replace(/{title}/g, titleWithLink)
+        .replace(/{title}/g, `<a href="${domain}" target="_blank">${titleWithLink}</a>`)
         .replace(/{app}/g, appFixed)
         .replace(/{url}/g, urlFixed)
         .replace(/{keywords_text}/g, keywordsText)

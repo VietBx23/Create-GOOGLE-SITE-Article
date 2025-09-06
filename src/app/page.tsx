@@ -236,35 +236,19 @@ export default function GSiteAutomatorPage() {
   };
 
   const copyHtmlContent = (htmlContent: string) => {
-    try {
-      const blob = new Blob([htmlContent], { type: 'text/html' });
-      const plainTextBlob = new Blob([htmlContent.replace(/<[^>]*>?/gm, '')], { type: 'text/plain' });
-      const item = new ClipboardItem({
-        'text/html': blob,
-        'text/plain': plainTextBlob,
-      });
-      navigator.clipboard.write([item]);
-      toast({
-          title: "Copied!",
-          description: "Content copied to clipboard.",
-      });
-    } catch (e) {
-      console.error("Failed to copy content: ", e);
-      // Fallback for older browsers
-      const listener = (ev: ClipboardEvent) => {
-        if (!ev.clipboardData) return;
-        ev.clipboardData.setData('text/html', htmlContent);
-        ev.clipboardData.setData('text/plain', htmlContent);
-        ev.preventDefault();
-      };
-      document.addEventListener('copy', listener);
-      document.execCommand('copy');
-      document.removeEventListener('copy', listener);
-      toast({
-          title: "Copied!",
-          description: "Content copied to clipboard (fallback).",
-      });
-    }
+    const listener = (e: ClipboardEvent) => {
+      if (!e.clipboardData) return;
+      e.clipboardData.setData('text/html', htmlContent);
+      e.clipboardData.setData('text/plain', htmlContent);
+      e.preventDefault();
+    };
+    document.addEventListener('copy', listener);
+    document.execCommand('copy');
+    document.removeEventListener('copy', listener);
+    toast({
+      title: "Copied!",
+      description: "Content copied to clipboard.",
+    });
   };
   
   const downloadArticleAsTxt = (article: Article) => {
