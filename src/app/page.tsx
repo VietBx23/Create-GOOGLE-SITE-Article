@@ -131,9 +131,9 @@ const KeywordSuggester = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="text-primary hover:text-primary/90">
+        <Button variant="ghost" className="text-primary hover:text-primary/90 h-auto p-1">
           <Sparkles className="mr-2 h-4 w-4" />
-          AI Keyword Suggester
+          AI Suggester
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
@@ -282,102 +282,97 @@ export default function GSiteAutomatorPage() {
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
                 <CardContent className="p-8">
-                  <div className="space-y-8">
-                     <div>
-                      <div className="flex items-center justify-between mb-4">
-                        <Label className="font-semibold text-foreground">Preset Primary Keywords</Label>
-                        <KeywordSuggester />
-                      </div>
-                      <div className="flex flex-wrap gap-2">
-                        {presetKeywords.map(kw => (
-                          <Button key={kw} type="button" size="sm" variant="outline" className="rounded-full transition-all duration-200 hover:bg-accent hover:scale-105" onClick={() => addPresetKeyword(kw)}>
-                            {kw}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-
+                  <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                        <FormField
-                            control={form.control}
-                            name="primaryKeywords"
-                            render={({ field }) => (
-                            <FormItem className="md:col-span-2">
-                                <FormLabel className="flex items-center gap-2 font-semibold">
+                      <FormField
+                        control={form.control}
+                        name="primaryKeywords"
+                        render={({ field }) => (
+                          <FormItem className="md:col-span-2">
+                            <div className="flex items-center justify-between mb-1">
+                              <FormLabel className="flex items-center gap-2 font-semibold">
                                 <Key className="h-5 w-5 text-primary" /> Primary Keywords
-                                </FormLabel>
-                                <FormDescription>Keywords that will be reused across multiple articles.</FormDescription>
-                                <FormControl>
-                                <Textarea
-                                    placeholder="e.g., keyword one, keyword two"
-                                    {...field}
-                                    className="min-h-[100px]"
-                                />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="secondaryKeywords"
-                            render={({ field }) => (
-                            <FormItem className="md:col-span-2">
-                                <FormLabel className="flex items-center gap-2 font-semibold">
-                                <Tags className="h-5 w-5 text-primary" /> Secondary Keywords
-                                </FormLabel>
-                                <FormDescription>Each keyword will be used to generate a unique article.</FormDescription>
-                                <FormControl>
-                                <Textarea
-                                    placeholder="e.g., keyword three, keyword four"
-                                    {...field}
-                                    className="min-h-[120px]"
-                                />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                            )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="cy"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="flex items-center gap-2 font-semibold">
-                                <CalendarDays className="h-5 w-5 text-primary" /> CY Value
                               </FormLabel>
-                              <FormControl>
-                                <Input placeholder="e.g., 2025" {...field} className="h-11"/>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="chosenLink"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="flex items-center gap-2 font-semibold">
-                                <LinkIcon className="h-5 w-5 text-primary" /> Domain Link
-                              </FormLabel>
-                              <FormControl>
-                                <Input placeholder="e.g., example.com" {...field} className="h-11"/>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                         <div className="md:col-span-2">
-                             <Label className="font-semibold text-base text-muted-foreground">Preset Links</Label>
-                             <div className="flex flex-wrap gap-2 mt-2">
-                                {presetLinks.map(link => (
-                                  <Button key={link} type="button" size="sm" variant="outline" className="rounded-full transition-all duration-200 hover:bg-accent hover:scale-105" onClick={() => form.setValue("chosenLink", link, { shouldValidate: true })}>
-                                    {link}
-                                  </Button>
+                              <KeywordSuggester />
+                            </div>
+                            <FormDescription>Keywords that will be reused across multiple articles.</FormDescription>
+                            <FormControl>
+                              <Textarea
+                                placeholder="e.g., keyword one, keyword two"
+                                {...field}
+                                className="min-h-[100px]"
+                              />
+                            </FormControl>
+                             <div className="flex flex-wrap gap-2 pt-2">
+                                <span className="text-sm text-muted-foreground mr-2">Presets:</span>
+                                {presetKeywords.map(kw => (
+                                <Button key={kw} type="button" size="sm" variant="outline" className="rounded-full transition-all duration-200 hover:bg-accent hover:scale-105" onClick={() => addPresetKeyword(kw)}>
+                                    {kw}
+                                </Button>
                                 ))}
-                              </div>
-                         </div>
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="secondaryKeywords"
+                        render={({ field }) => (
+                          <FormItem className="md:col-span-2">
+                            <FormLabel className="flex items-center gap-2 font-semibold">
+                              <Tags className="h-5 w-5 text-primary" /> Secondary Keywords
+                            </FormLabel>
+                            <FormDescription>Each keyword will be used to generate a unique article.</FormDescription>
+                            <FormControl>
+                              <Textarea
+                                placeholder="e.g., keyword three, keyword four"
+                                {...field}
+                                className="min-h-[120px]"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="chosenLink"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="flex items-center gap-2 font-semibold">
+                              <LinkIcon className="h-5 w-5 text-primary" /> Domain Link
+                            </FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., example.com" {...field} className="h-11" />
+                            </FormControl>
+                             <div className="flex flex-wrap gap-2 pt-2">
+                                <span className="text-sm text-muted-foreground mr-2">Presets:</span>
+                                {presetLinks.map(link => (
+                                <Button key={link} type="button" size="sm" variant="outline" className="rounded-full transition-all duration-200 hover:bg-accent hover:scale-105" onClick={() => form.setValue("chosenLink", link, { shouldValidate: true })}>
+                                    {link}
+                                </Button>
+                                ))}
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="cy"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="flex items-center gap-2 font-semibold">
+                              <CalendarDays className="h-5 w-5 text-primary" /> CY Value
+                            </FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., 2025" {...field} className="h-11" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
                   </div>
                 </CardContent>
@@ -398,10 +393,10 @@ export default function GSiteAutomatorPage() {
           {articles.length > 0 && (
             <section className="mt-16">
               <div className="text-center mb-8">
-                  <h2 className="text-3xl font-bold tracking-tighter text-foreground">
+                <h2 className="text-3xl font-bold tracking-tighter text-foreground">
                   Generated Articles
-                  </h2>
-                  <p className="text-muted-foreground mt-2">Found {articles.length} articles. Ready to copy or download.</p>
+                </h2>
+                <p className="text-muted-foreground mt-2">Found {articles.length} articles. Ready to copy or download.</p>
               </div>
               <div className="space-y-4">
                 {articles.map((article, index) => (
@@ -453,5 +448,3 @@ export default function GSiteAutomatorPage() {
     </div>
   );
 }
-
-    
