@@ -5,155 +5,155 @@ export const FIXED_APPS: string[] = [
 ];
 
 export const FIXED_URLS: string[] = [
-    "Latest Online Address", "Portal Page", "Current Available Address", "Permanent Address", "Official Latest Address",
-    "Online Watch Entry", "Free Watch Entry", "No Payment Required", "Ad-Free Online Play", "HD Videos Free",
+    "最新在线地址", "入口页面", "当前可用地址", "永久地址", "官方最新地址",
+    "在线观看入口", "免费观看入口", "无需付费", "无广告在线播放", "高清视频免费",
 ];
 
 export const TEMPLATES: string[] = [
     `{titleForContent}
 
-🎉 Welcome to the {app} {url} Official Navigation Page!
+🎉 欢迎来到 {app} {url} 官方导航页！
 
-Dear user, to help you easily and quickly find the latest address for {app}, we have created this official navigation page. Whether you are a first-time visitor or a long-time user, you can get the latest and most stable access links here.
+尊敬的用户，为了帮助您方便快捷地找到 {app} 的最新地址，我们特别创建了此官方导航页面。无论您是初次访问还是长期用户，都可以在这里获取到最新、最稳定的访问链接。
 
-Keywords: {keywords_text}
-Last Updated: {date}
+关键词: {keywords_text}
+最后更新时间: {date}
 
-Here are the currently available access points. It is highly recommended to save multiple backup links to prevent issues with the main link:
+以下是目前可用的访问入口，强烈建议您收藏多个备用链接，以防主链接出现问题：
 {mainLink}
-📌 Our Advantages:
-- Real-time monitoring of all link statuses to ensure every link is accessible and to prevent dead links.
-- Supports all devices, including mobile phones, tablets, and computers, for a seamless cross-platform experience.
-- No registration or login required, completely free, protecting user privacy.
-- A clean and simple interface with no pop-ups or ad interruptions.
+📌 我们的优势:
+- 实时监控所有链接状态，确保每个链接都可正常访问，杜绝死链。
+- 支持所有设备，包括手机、平板和电脑，实现无缝跨平台体验。
+- 无需注册登录，完全免费，保护用户隐私。
+- 简洁清爽的界面，无弹窗、无广告干扰。
 
-⚙️ What to do if you encounter access issues?
-- First, try refreshing the page or clearing your browser cache to remove old data.
-- Try accessing with a different browser, such as Chrome, Firefox, or Edge.
-- Use incognito mode to avoid browser extensions or cache interference.
-- If your network environment has restrictions, consider using a VPN or proxy service to bypass geo-blocking.
-- Ensure your network connection is stable; switch to mobile data or another network if necessary.
+⚙️ 遇到访问问题怎么办？
+- 首先尝试刷新页面或清除浏览器缓存，以排除旧数据干扰。
+- 尝试使用不同的浏览器访问，如谷歌浏览器（Chrome）、火狐浏览器（Firefox）或 Edge 浏览器。
+- 使用无痕模式访问，避免浏览器插件或缓存的干扰。
+- 如果您所在的网络环境有限制，可以考虑使用VPN或代理服务来绕过地理封锁。
+- 确保您的网络连接稳定，必要时可切换至移动数据或其他网络。
 
-✨ We are committed to creating a safe and stable access environment for our users. Your support is our driving force. Please bookmark this page to find the latest links at any time. If you have any questions or suggestions, feel free to contact us through official channels.
+✨ 我们致力于为广大用户打造一个安全、稳定的访问环境。您的支持是我们前进的动力。请收藏本页面，以便随时找到最新的链接。如有任何疑问或建议，欢迎通过官方渠道与我们联系。
 
-Thank you for your trust. Enjoy your visit!
+感谢您的信任，祝您访问愉快！
 `,
 
     `{titleForContent}
 
-🔥 {app} - {url} Latest Available Addresses!
+🔥 {app} - {url} 最新可用地址发布！
 
-As network restrictions increase, ensuring stable access to quality content has become our top priority. We have carefully compiled and continuously update this page to ensure you get the latest available address for {app}.
+随着网络限制的增加，保证稳定访问优质内容成为我们的首要任务。我们精心整理并持续更新此页面，确保您能获取 {app} 的最新可用地址。
 
-Keywords: {keywords_text}
-Page Updated: {date}
+关键词: {keywords_text}
+页面更新于: {date}
 
-🔗 Current Available Addresses:
+🔗 当前可用地址:
 {mainLink}
-Why Choose Us?
-- Multi-line support ensures quick switching if one line fails, without affecting your viewing experience.
-- Advanced server cluster technology greatly improves access speed and stability.
-- Regularly updated content to ensure a rich and diverse selection that meets different user needs.
-- Strict no-ad policy to eliminate all harassing pop-ups and ads, focusing on user experience.
-- Completely anonymous access, no collection of personal information, protecting your privacy.
+为什么选择我们？
+- 多线路支持，确保一条线路失效时可快速切换，不影响您的观看体验。
+- 先进的服务器集群技术，大幅提升访问速度和稳定性。
+- 定期更新内容，确保内容丰富多样，满足不同用户的需求。
+- 严格的无广告策略，杜绝一切骚扰弹窗和广告，专注用户体验。
+- 完全匿名访问，不收集任何个人信息，保护您的隐私安全。
 
-🌟 Usage Tips:
-- Please save multiple links to prevent the main link from being temporarily unavailable due to maintenance or blocks.
-- If you experience slow loading or inaccessibility, try clearing your browser cache or switching your network.
-- It is recommended to use the latest version of major browsers like Chrome or Firefox for the best performance.
-- If you are in a restricted network area, consider using a VPN for uninterrupted access.
+🌟 使用建议:
+- 请务必保存多个链接，以防主链接因维护或封锁而暂时无法使用。
+- 如遇加载缓慢或无法访问，请尝试清理浏览器缓存或切换网络。
+- 建议使用最新版本的 Chrome、Firefox 等主流浏览器，以获得最佳性能。
+- 如果您处于网络受限地区，可以考虑使用VPN，以保证无障碍访问。
 
-💬 User Support:
-If you encounter any issues or need assistance, please contact us through our official feedback channels. We have a professional technical team dedicated to responding and resolving access-related problems quickly.
+💬 用户支持:
+如您在使用中遇到任何问题或需要帮助，请通过我们的官方反馈渠道联系我们。我们有专业的技术团队，会快速响应并解决访问相关问题。
 
-Thank you for your continued support and understanding. We wish you a pleasant browsing experience!
+感谢您的长期支持与理解，祝您浏览愉快！
 `,
 
     `{titleForContent}
 
-🚀 {app} Official Redirect Portal - {url}
+🚀 {app} 官方跳转门户 - {url}
 
-Hello, welcome to the {app} official navigation page, carefully maintained by our team. This page provides the latest, safest, and most stable access points to ensure you can browse all content smoothly.
+您好，欢迎来到由我们团队精心维护的 {app} 官方导航页。本页面提供最新、最安全、最稳定的访问入口，确保您可以顺畅地浏览所有内容。
 
-Keyword Aggregation: {keywords_text}
-Date: {date}
+关键词聚合: {keywords_text}
+日期: {date}
 
-🌍 Available Addresses:
+🌍 可用地址:
 {mainLink}
-📢 Access Recommendations:
-- For mobile devices, we recommend using Chrome or Safari for the best compatibility and experience.
-- If you face access issues on a WiFi network, try switching to 4G/5G mobile data or using a VPN.
-- Enable incognito/private mode to prevent browser cache from affecting page loads.
-- If you encounter display anomalies or broken links, try clearing your browser cache and cookies.
+📢 访问建议:
+- 移动设备建议使用 Chrome 或 Safari 浏览器，以获得最佳的兼容性和体验。
+- 如果您在WiFi网络下访问遇到问题，可以尝试切换到4G/5G移动数据或使用VPN。
+- 开启无痕/隐私模式，可以有效防止浏览器缓存影响页面加载。
+- 如遇页面显示异常或链接失效，请尝试清除浏览器缓存和Cookie。
 
-⚙️ Technical Guarantee:
-- This navigation page is the only official portal. All links are rigorously tested to eliminate dead links and security risks.
-- Absolutely no pop-ups, ads, or malicious plugins, ensuring user safety.
-- We check and update link statuses daily to ensure they are always effective.
-- Any access issues can be reported through official channels for fast and professional support.
+⚙️ 技术保障:
+- 本导航页是唯一官方入口，所有链接均经过严格测试，杜绝死链和安全隐患。
+- 绝无弹窗、广告和恶意插件，保障用户安全。
+- 我们每日检查和更新链接状态，确保其始终有效。
+- 任何访问问题均可通过官方渠道反馈，获得快速、专业的支持。
 
-❤️ User Privacy:
-We respect your privacy and do not track any browsing behavior. All access is handled anonymously.
+❤️ 用户隐私:
+我们尊重您的隐私，绝不追踪任何浏览行为，所有访问均匿名处理。
 
-Please bookmark this page to ensure you can always find the latest links. Thank you for your support and trust!
+请您务必收藏本页面，确保能随时找到最新的地址。感谢您的支持与信任！
 `,
 
     `{titleForContent}
 
-📢 {app} {url} New Navigation Page is Live!
+📢 {app} {url} 全新导航页上线！
 
-Dear user, in today's complex network environment, obtaining a stable and reliable access link is crucial. We have launched this official navigation page so you can easily get the latest address for {app} and ensure uninterrupted access.
+亲爱的用户，在如今复杂的网络环境下，获取稳定可靠的访问链接至关重要。我们特别推出此官方导航页，让您可以轻松获得 {app} 的最新地址，确保访问不中断。
 
-Keywords: {keywords_text}
-Page Updated: {date}
+关键词: {keywords_text}
+页面更新于: {date}
 
-🔗 Current Available Address:
+🔗 当前可用地址:
 {mainLink}
-📌 Platform Advantages:
-- Stable lines for fast and direct access.
-- Full compatibility with all devices and major browsers.
-- Real-time monitoring to update valid links promptly.
-- Clean interface, free from ads and disturbances.
-- Secure access, fully protecting your privacy.
+📌 平台优势:
+- 稳定线路，访问快速直达。
+- 全面兼容所有设备和主流浏览器。
+- 实时监控，及时更新有效链接。
+- 界面纯净，免受广告和干扰。
+- 安全访问，全面保护您的隐私。
 
-⚙️ Troubleshooting:
-- Page not opening? Try refreshing and clearing the cache first.
-- Link not working? Use a backup link.
-- Network restricted? Try using a VPN.
-- Page display issues? Switch browsers or use incognito mode.
+⚙️ 问题排查:
+- 页面打不开？先尝试刷新和清除缓存。
+- 链接失效？请使用备用链接。
+- 网络受限？尝试开启VPN。
+- 页面显示异常？切换浏览器或使用无痕模式。
 
-✨ Friendly Reminder:
-We check and update the available addresses daily to ensure you have smooth access. We recommend bookmarking this page to always find the latest address.
+✨ 温馨提示:
+我们每日都会检查和更新可用地址，以保证您能顺畅访问。建议您收藏本页，以便随时找到最新地址。
 
-Thank you for your long-term support and trust. Happy browsing!
+感谢您的长期支持与信任，祝您使用愉快！
 `,
 
     `{titleForContent}
 
-🔥 Permanent Bookmark Guide - {app} {url} Official Direct Access!
+🔥 永久收藏指南 - {app} {url} 官方直达！
 
-Hello! This page provides you with the latest address for {app}, helping you avoid issues from network blocks or broken links. Through this official portal, you will get the newest and most stable access method.
+您好！本页面为您提供 {app} 的最新地址，帮助您摆脱网络封锁或链接失效的困扰。通过此官方入口，您将获得最新、最稳定的访问方式。
 
-Keywords: {keywords_text}
-Updated: {date}
+关键词: {keywords_text}
+更新于: {date}
 
-🌍 Latest Entry:
+🌍 最新入口:
 {mainLink}
-📌 Our Service Advantages:
-- Professional team monitors in real-time to ensure portal availability.
-- Full-platform adaptation for a seamless experience.
-- High-speed lines for faster and more stable access.
-- Completely free, no registration required.
-- Strict privacy protection for anonymous and secure browsing.
+📌 我们的服务优势:
+- 专业团队实时监控，确保入口可用。
+- 全平台适配，提供无缝体验。
+- 高速线路，访问更稳定、更快速。
+- 完全免费，无需注册。
+- 严格的隐私保护，让您匿名安全浏览。
 
-⚙️ Common Issues and Solutions:
-- If access is abnormal, please refresh or switch browsers.
-- If the network is slow, try changing networks or enabling a VPN.
-- If an entry is temporarily unavailable, please use a backup address.
+⚙️ 常见问题与解决:
+- 如访问异常，请刷新或更换浏览器。
+- 如网络缓慢，请尝试更换网络或开启VPN。
+- 如入口暂时失效，请使用备用地址。
 
-✨ Friendly Reminder:
-Be sure to bookmark this page in your browser to always find the latest address. We will continuously optimize our services to bring you a better experience.
+✨ 温馨提示:
+请务必将此页面收藏到您的浏览器，以便随时找到最新地址。我们将持续优化服务，为您带来更好的体验。
 
-Thank you for your support, and enjoy your time!
+感谢您的支持，祝您玩得开心！
 `,
 ];
