@@ -269,19 +269,16 @@ export default function GSiteAutomatorPage() {
     <div className="min-h-screen dotted-background">
       <main className="container mx-auto px-4 py-12 md:py-20">
         <div className="max-w-4xl mx-auto animate-fade-in">
-          <header className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary/90 to-primary">
-              GSite Automator
-            </h1>
-            <p className="text-base text-muted-foreground mt-4 max-w-2xl mx-auto">
-              Your AI-Powered Content Engine for Google Sites. Effortlessly generate keyword-rich articles from a simple form.
-            </p>
-          </header>
-
+          
           <Card className="shadow-2xl shadow-primary/10 rounded-2xl border-primary/20 transition-all duration-300 hover:shadow-primary/20">
+            <CardHeader className="text-center">
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-primary/90 to-primary">
+                GSite Automator
+              </h1>
+            </CardHeader>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)}>
-                <CardContent className="p-8">
+                <CardContent className="p-8 pt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                       <div className="space-y-6">
                         <FormField
@@ -380,7 +377,7 @@ export default function GSiteAutomatorPage() {
                       </div>
                   </div>
                 </CardContent>
-                <CardFooter className="p-6 bg-muted/30 rounded-b-2xl mt-8">
+                <CardFooter className="p-6 bg-muted/30 rounded-b-2xl">
                   <Button type="submit" disabled={isPending} size="lg" className="w-full font-bold text-lg h-14 bg-gradient-to-r from-primary/90 to-primary shadow-lg shadow-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/40 hover:scale-[1.02]">
                     {isPending ? (
                       <Loader2 className="mr-2 h-6 w-6 animate-spin" />
