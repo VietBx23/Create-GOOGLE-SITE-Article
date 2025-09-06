@@ -67,6 +67,7 @@
     background-color: hsl(var(--background));
     background-image:  radial-gradient(hsl(var(--primary) / 0.2) 1px, transparent 1px);
     background-size: 16px 16px;
+    background-attachment: fixed;
 }
 
 @keyframes fadeIn {
